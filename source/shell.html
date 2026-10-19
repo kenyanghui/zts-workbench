@@ -1,0 +1,103 @@
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">中</span>
+      <span><strong>中通服项目评审工作台</strong><small>财政评审 · 软件造价审核</small></span>
+    </div>
+    <div class="batch-card">
+      <span class="kicker">本批判次</span>
+      <strong>2026 年第三季度 · 财政评审</strong>
+      <em>6 个项目 · 送审 1,694 万</em>
+    </div>
+    <nav class="nav" aria-label="工作台导航">
+      <button class="nav-item active" data-go="overview" data-nav="overview">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg>
+        <span>批次总览</span><span class="nav-count">6</span>
+      </button>
+      <button class="nav-item" data-go="projects" data-nav="projects">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h3l1.5 2h6.5A1.5 1.5 0 0 1 17 8.5v6A1.5 1.5 0 0 1 15.5 16h-11A1.5 1.5 0 0 1 3 14.5v-8Z"/></svg>
+        <span>项目卷宗</span><span class="nav-count">6</span>
+      </button>
+      <button class="nav-item" data-go="fp/A" data-nav="fp">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1.5"/><path d="M6.5 7h7M6.5 10h7M6.5 13h4"/><path d="M14.5 14.5 17 17"/></svg>
+        <span>功能点审核</span><span class="nav-count">86</span>
+      </button>
+      <button class="nav-item" data-go="cost/B" data-nav="cost">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16V5.5A1.5 1.5 0 0 1 5.5 4H15v12H5.5A1.5 1.5 0 0 1 4 14.5Z"/><path d="M4 14.5A1.5 1.5 0 0 1 5.5 13H15"/><path d="M8 8h4M8 10.5h3"/></svg>
+        <span>费用审核</span><span class="nav-count">12</span>
+      </button>
+      <button class="nav-item" data-go="tech" data-nav="tech">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1.5"/><path d="m6 10 2.2 2.2L14 6.8"/></svg>
+        <span>技术评审</span><span class="nav-count">17</span>
+      </button>
+      <button class="nav-item" data-go="kb" data-nav="kb">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="10" cy="5" rx="6" ry="2.4"/><path d="M4 5v5c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4V5"/><path d="M4 10v5c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4v-5"/></svg>
+        <span>知识库</span><span class="nav-count">6</span>
+      </button>
+      <button class="nav-item" data-go="audit/A" data-nav="audit">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1.5"/><path d="M3 8h14M8 8v9M8 3v5"/></svg>
+        <span>审定表</span><span class="nav-count">6</span>
+      </button>
+      <button class="nav-item" data-go="arch" data-nav="arch">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m10 3 7 3.5-7 3.5-7-3.5L10 3Z"/><path d="m3 10 7 3.5 7-3.5"/><path d="m3 13.5 7 3.5 7-3.5"/></svg>
+        <span>架构</span>
+      </button>
+    </nav>
+    <div class="sidebar-note">
+      合成演示：项目、金额、功能点和专家意见均不对应真实项目。AI 建议只作初稿，结论由评审人确认。
+    </div>
+    <div class="sidebar-footer">中通服评审中心 · 财政评审 · 内网部署</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="crumbs" id="crumbs">批次总览</div>
+        <div class="top-actions">
+          <span class="demo-pill" id="demoPill" hidden>演示状态已改变</span>
+          <span class="badge tone-green" style="font-size:10px;">内网部署</span>
+          <div class="search">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="8.5" r="5"/><path d="m12.2 12.2 4.3 4.3"/></svg>
+            <input id="globalSearch" type="search" autocomplete="off" placeholder="搜索项目、功能点、费用项、依据  /" aria-label="搜索项目、功能点、费用项或依据">
+            <div class="search-results" id="searchResults" hidden></div>
+          </div>
+          <button class="btn btn-ghost" id="tourTopBtn" data-action="start-tour">▶ 5 分钟导览</button>
+          <button class="btn" data-action="print">打印</button>
+          <button class="btn" data-action="reset-demo">重置</button>
+        </div>
+      </div>
+    </header>
+    <main class="view" id="view"></main>
+    <noscript><div style="padding:20px;color:#66798b;font-size:12px;">此工作台需要启用 JavaScript 才能交互；请允许脚本后刷新页面。</div></noscript>
+    <footer class="app-footer" style="max-width:1400px;width:100%;margin:0 auto;padding:10px 22px 18px;color:var(--muted);font-size:10.5px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+      <span>中通服项目评审工作台 · 合成演示 · 数据不出内网</span>
+      <span>依据：标准规范 / 历史案例 / 合同 / 采购价 / 专家意见</span>
+    </footer>
+  </div>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-hidden="true" aria-labelledby="drawerTitle" role="dialog" aria-modal="true">
+  <div class="drawer-head">
+    <div><span class="kicker" id="drawerKicker">详情</span><h2 id="drawerTitle"></h2></div>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">×</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<div class="tour-card" id="tourCard" hidden aria-live="polite">
+  <div class="tour-kicker"><span>互动导览</span><strong id="tourStepLabel">1 / 7</strong></div>
+  <div class="tour-progress"><span id="tourProgress" style="width:14.2%"></span></div>
+  <h3 id="tourTitle"></h3>
+  <p id="tourText"></p>
+  <div class="tour-actions">
+    <button class="btn btn-sm" data-action="exit-tour">退出</button>
+    <div>
+      <span class="tour-hint">← → 切换</span>
+      <button class="btn btn-sm" data-action="prev-tour" id="tourPrev">上一步</button>
+      <button class="btn btn-primary btn-sm" data-action="next-tour" id="tourNext">下一步</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>

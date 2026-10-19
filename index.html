@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>中通服项目评审工作台 · 财政评审</title>
+<style>
+
+  :root{
+    --bg:#edf1f5;
+    --panel:#ffffff;
+    --panel-2:#f7fafc;
+    --panel-3:#fbfcfd;
+    --ink:#152a3b;
+    --ink-2:#2d4559;
+    --muted:#66798b;
+    --muted-2:#8797a6;
+    --line:#d8e2ea;
+    --line-2:#e8eef3;
+    --navy:#1c3f5c;
+    --blue:#2c6a96;
+    --blue-2:#3d80ad;
+    --blue-soft:#e9f2f8;
+    --teal:#2c6b5f;
+    --red:#a23f32;
+    --red-soft:#faeeeb;
+    --amber:#8a5f08;
+    --amber-soft:#fbf4e2;
+    --green:#2f6b4f;
+    --green-soft:#eaf4ee;
+    --violet:#5a4c8a;
+    --violet-soft:#efedf7;
+    --shadow:0 1px 2px rgba(20,40,60,.04),0 4px 14px rgba(20,40,60,.035);
+    --shadow-strong:0 12px 34px rgba(20,40,60,.16);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+    font-size:13px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  button,input,select{font:inherit;}
+  button{cursor:pointer;}
+  a{color:var(--blue);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  h1,h2,h3,h4{margin:0;font-weight:700;color:var(--ink);}
+  p{margin:0;}
+  [hidden]{display:none !important;}
+  ::selection{background:#cfe3f2;}
+
+  .app{display:flex;min-height:100vh;}
+  .sidebar{
+    width:248px;flex:0 0 248px;background:#fbfcfd;border-right:1px solid var(--line);
+    padding:18px 14px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:14px;z-index:10;
+  }
+  .brand{display:flex;align-items:center;gap:10px;min-width:0;}
+  .brand-mark{
+    width:34px;height:34px;flex:0 0 34px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(145deg,#1c3f5c,#2f6f9f);color:#fff;font-weight:700;font-size:15px;
+    box-shadow:0 2px 7px rgba(28,63,92,.24);
+  }
+  .brand strong{display:block;font-size:14px;line-height:1.3;letter-spacing:.2px;white-space:nowrap;}
+  .brand small{display:block;color:var(--muted);font-size:10.5px;line-height:1.35;margin-top:2px;}
+  .batch-card{
+    border:1px solid var(--line);background:#fff;border-radius:7px;padding:9px 10px 8px;
+    border-left:3px solid var(--blue);box-shadow:var(--shadow);
+  }
+  .batch-card .kicker{font-size:9.5px;}
+  .batch-card strong{display:block;font-size:11.5px;line-height:1.45;color:var(--ink);margin:2px 0 3px;font-weight:600;}
+  .batch-card em{display:block;font-style:normal;color:var(--blue);font-size:10.5px;line-height:1.4;}
+  .nav{display:flex;flex-direction:column;gap:2px;}
+  .nav-item{
+    display:flex;align-items:center;gap:9px;width:100%;border:0;border-left:3px solid transparent;
+    background:transparent;color:var(--ink-2);padding:7px 9px;text-align:left;font-size:12.5px;border-radius:6px;
+    transition:background .14s ease,color .14s ease;
+  }
+  .nav-item svg{width:16px;height:16px;flex:0 0 16px;color:var(--muted);}
+  .nav-item:hover{background:#eef3f7;color:var(--ink);}
+  .nav-item.active{background:var(--blue-soft);border-left-color:var(--blue);color:var(--navy);font-weight:700;}
+  .nav-item.active svg{color:var(--blue);}
+  .nav-count{
+    margin-left:auto;min-width:19px;padding:0 5px;text-align:center;border-radius:9px;
+    background:#e3ebf2;color:var(--blue);font-size:10px;line-height:17px;font-weight:700;
+  }
+  .nav-item.active .nav-count{background:var(--blue);color:#fff;}
+  .sidebar-note{color:var(--muted);font-size:10.6px;line-height:1.55;border-top:1px solid var(--line);padding-top:10px;margin-top:auto;}
+  .sidebar-footer{color:var(--muted-2);font-size:10.3px;line-height:1.45;}
+
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{
+    position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);
+    border-bottom:1px solid var(--line);backdrop-filter:blur(8px);
+  }
+  .topbar-inner{max-width:1400px;margin:0 auto;padding:9px 22px;display:flex;align-items:center;gap:10px;}
+  .crumbs{font-size:11.5px;color:var(--muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .crumbs b{color:var(--ink);font-weight:600;}
+  .top-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end;}
+  .search{position:relative;width:292px;}
+  .search svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--muted);pointer-events:none;}
+  .search input{
+    width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);
+    padding:6px 9px 6px 28px;border-radius:6px;outline:none;font-size:12px;
+  }
+  .search input:focus{border-color:var(--blue-2);box-shadow:0 0 0 3px var(--blue-soft);}
+  .search-results{
+    position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:40;background:#fff;
+    border:1px solid var(--line);border-radius:6px;max-height:360px;overflow:auto;box-shadow:var(--shadow-strong);
+  }
+  .search-result{
+    display:block;width:100%;border:0;border-bottom:1px solid var(--line-2);background:#fff;
+    text-align:left;padding:7px 9px;color:var(--ink-2);font-size:11.5px;line-height:1.4;
+  }
+  .search-result:last-child{border-bottom:0;}
+  .search-result:hover{background:var(--panel-2);}
+  .search-result small{display:block;color:var(--muted);font-size:10.5px;margin-top:1px;}
+  .search-empty{padding:10px;color:var(--muted);font-size:11px;}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:5px;
+    border:1px solid var(--line);background:#fff;color:var(--ink-2);
+    padding:5px 9px;border-radius:5px;font-size:11.5px;line-height:1.45;white-space:nowrap;
+    transition:background .14s ease,border-color .14s ease,color .14s ease;
+  }
+  .btn:hover{background:var(--panel-2);border-color:#bdcbd8;color:var(--ink);}
+  .btn:focus-visible{outline:2px solid var(--blue-2);outline-offset:1px;}
+  .btn-primary{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .btn-primary:hover{background:#15354f;border-color:#15354f;color:#fff;}
+  .btn-ghost{color:var(--blue);border-color:#c8d8e6;background:#fff;}
+  .btn-ghost:hover{background:var(--blue-soft);}
+  .btn-sm{padding:3px 7px;font-size:10.8px;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .demo-pill{
+    display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border:1px solid #d6b57c;
+    background:var(--amber-soft);color:var(--amber);font-size:10.5px;line-height:1.5;border-radius:4px;
+  }
+
+  .view{max-width:1400px;width:100%;margin:0 auto;padding:20px 22px 40px;}
+  .page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:12px;}
+  .page-head h1{font-size:23px;line-height:1.3;letter-spacing:.1px;}
+  .page-head .sub{color:var(--muted);font-size:12px;margin-top:3px;}
+  .page-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+  .kicker{display:block;font-size:9.8px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted-2);font-weight:700;line-height:1.4;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:16px 0 9px;}
+  .section-head h2{font-size:14.5px;letter-spacing:.1px;}
+  .section-head .hint{font-size:10.8px;color:var(--muted);}
+
+  .batch-strip{
+    display:grid;grid-template-columns:1.4fr .8fr .9fr auto;gap:12px;align-items:center;
+    background:#fff;border:1px solid var(--line);border-radius:7px;padding:9px 12px;margin:11px 0 12px;
+    box-shadow:var(--shadow);
+  }
+  .batch-strip > div > span{display:block;font-size:9.8px;letter-spacing:.08em;color:var(--muted-2);text-transform:uppercase;}
+  .batch-strip > div > strong{display:block;font-size:11.5px;color:var(--ink);font-weight:600;line-height:1.4;margin-top:1px;}
+  .batch-strip .strip-note{font-size:10.5px;color:var(--muted);border-left:1px solid var(--line);padding-left:12px;white-space:nowrap;}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:10px 0 14px;}
+  .kpi{
+    position:relative;background:#fff;border:1px solid var(--line);border-radius:7px;padding:10px 11px 9px;
+    min-height:76px;overflow:hidden;box-shadow:var(--shadow);
+  }
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);}
+  .kpi.tone-warn::before{background:var(--red);}
+  .kpi.tone-amber::before{background:var(--amber);}
+  .kpi.tone-green::before{background:var(--green);}
+  .kpi span{display:block;color:var(--muted);font-size:10.5px;}
+  .kpi strong{display:block;font-size:24px;line-height:1.12;font-weight:700;font-variant-numeric:tabular-nums;margin:2px 0 1px;}
+  .kpi small{display:block;color:var(--muted-2);font-size:10.2px;line-height:1.35;}
+  .kpi[data-go]{cursor:pointer;}
+  .kpi[data-go]:hover{border-color:#b8c9d8;background:#fbfdfe;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:13px 15px 14px;margin-bottom:12px;box-shadow:var(--shadow);}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:9px;}
+  .panel-head h2{font-size:13.8px;letter-spacing:.1px;}
+  .panel-head .hint{color:var(--muted-2);font-size:10.5px;font-weight:400;}
+  .grid-3{display:grid;grid-template-columns:1.05fr 1fr 1.25fr;gap:10px;margin-bottom:12px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+  .grid-3 .panel,.grid-2 .panel{margin-bottom:0;}
+
+  .project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px;}
+  .project-card{
+    background:#fff;border:1px solid var(--line);border-top:3px solid var(--blue-2);border-radius:7px;
+    padding:12px 13px 11px;display:flex;flex-direction:column;gap:8px;min-width:0;cursor:pointer;
+    box-shadow:var(--shadow);transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease;
+  }
+  .project-card:hover{border-color:#b8c9d8;box-shadow:0 3px 12px rgba(31,61,89,.08);transform:translateY(-1px);}
+  .project-card:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+  .project-card.accent-high{border-top-color:var(--red);}
+  .project-card.accent-mid{border-top-color:#b07a16;}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .project-code{display:block;color:var(--muted);font-size:9.8px;letter-spacing:.12px;margin-bottom:2px;}
+  .project-card h3{font-size:13.5px;line-height:1.4;margin:0 0 2px;}
+  .applicant{color:var(--muted);font-size:11px;line-height:1.4;margin:0;}
+  .card-meta{display:grid;grid-template-columns:1fr 1fr;gap:5px 9px;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);padding:7px 0;}
+  .card-meta > div > span{display:block;color:var(--muted);font-size:9.9px;}
+  .card-meta > div > strong{display:block;color:var(--ink);font-size:11.4px;font-weight:600;margin-top:1px;}
+  .card-foot{margin-top:auto;padding-top:7px;border-top:1px solid var(--line-2);color:var(--blue);font-size:10.8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .card-foot span:first-child{flex:1;min-width:0;color:var(--muted);line-height:1.45;}
+  .card-foot span:last-child{white-space:nowrap;flex:0 0 auto;}
+
+  .badge{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;padding:1px 7px;border-radius:999px;font-size:10.3px;font-weight:600;line-height:1.6;border:1px solid transparent;}
+  .tone-blue{color:var(--blue);background:var(--blue-soft);border-color:#c9d9e7;}
+  .tone-slate{color:#4c6072;background:#e9eef3;border-color:#d2dce5;}
+  .tone-amber{color:var(--amber);background:var(--amber-soft);border-color:#ead9b5;}
+  .tone-red{color:var(--red);background:var(--red-soft);border-color:#eccfc8;}
+  .tone-green{color:var(--green);background:var(--green-soft);border-color:#cfe3d8;}
+  .tone-violet{color:var(--violet);background:var(--violet-soft);border-color:#d9d4ea;}
+
+  .rail{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;margin:2px 0 0;}
+  .rail-step{position:relative;text-align:center;min-width:0;padding-top:1px;}
+  .rail-step::before{content:"";position:absolute;top:5px;left:0;right:0;height:2px;background:var(--line-2);}
+  .rail-step:first-child::before{left:50%;}
+  .rail-step:last-child::before{right:50%;}
+  .rail-step.done::before{background:#9fc2da;}
+  .rail-dot{position:relative;z-index:1;width:9px;height:9px;border-radius:50%;display:block;margin:0 auto 3px;background:#c3cfda;box-shadow:0 0 0 2px #fff;}
+  .rail-step.done .rail-dot{background:var(--blue-2);}
+  .rail-step.current .rail-dot{background:#fff;border:2px solid var(--blue);box-shadow:0 0 0 2px var(--blue-soft);margin-top:-1px;margin-bottom:2px;}
+  .rail-step.draft .rail-dot{background:#fff;border:1.5px dashed var(--amber);}
+  .rail-label{display:block;font-size:8.8px;color:var(--muted);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .rail-step.done .rail-label{color:var(--ink-2);}
+  .rail-step.current .rail-label{color:var(--blue);font-weight:700;}
+
+  .riskRows{display:flex;flex-direction:column;gap:7px;margin-top:3px;}
+  .riskRow{display:grid;grid-template-columns:56px 1fr 28px;align-items:center;gap:8px;}
+  .riskLabel{font-size:10.8px;color:var(--ink-2);}
+  .riskBar{height:7px;background:var(--line-2);border-radius:4px;overflow:hidden;}
+  .riskBar span{display:block;height:100%;border-radius:4px;}
+  .riskHigh span{background:var(--red);}
+  .riskMid span{background:#b07a16;}
+  .riskLow span{background:var(--green);}
+  .riskCount{text-align:right;font-size:11.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .riskNote{color:var(--muted);font-size:10.5px;line-height:1.55;border-top:1px solid var(--line-2);padding-top:7px;margin-top:9px;}
+  .risk-details{margin-top:8px;border-top:1px solid var(--line-2);padding-top:7px;}
+  .risk-details summary{cursor:pointer;color:var(--blue);font-size:10.5px;font-weight:600;outline:none;}
+  .risk-details summary:hover{text-decoration:underline;}
+  .risk-details ul{margin:6px 0 0;padding-left:15px;color:var(--muted);font-size:10.4px;line-height:1.55;}
+  .risk-details li{margin-bottom:4px;}
+  .risk-details b{color:var(--ink-2);font-weight:600;}
+
+  .donut-wrap{display:flex;align-items:center;gap:14px;}
+  .donut{width:112px;height:112px;border-radius:50%;position:relative;flex:0 0 112px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.03);}
+  .donut-hole{position:absolute;inset:19px;background:#fff;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 1px var(--line-2);}
+  .donut-hole strong{font-size:21px;line-height:1.1;font-variant-numeric:tabular-nums;}
+  .donut-hole span{font-size:9.5px;color:var(--muted);margin-top:1px;}
+  .legend{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1;}
+  .legend-row{display:flex;align-items:center;gap:6px;font-size:10.8px;color:var(--ink-2);}
+  .legend-dot{width:8px;height:8px;border-radius:2px;flex:0 0 8px;}
+  .legend-row b{margin-left:auto;font-variant-numeric:tabular-nums;}
+
+  .priority{display:flex;flex-direction:column;gap:0;}
+  .priority-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--line-2);cursor:pointer;}
+  .priority-row:last-child{border-bottom:0;}
+  .priority-row:hover{background:#f8fbfd;}
+  .priority-main{flex:1;min-width:0;}
+  .priority-title{font-size:11.5px;font-weight:600;line-height:1.4;color:var(--ink);}
+  .priority-sub{font-size:10.2px;color:var(--muted);margin-top:1px;}
+  .priority-date{font-size:10px;color:var(--muted-2);white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+  .common-list{display:flex;flex-direction:column;gap:7px;counter-reset:common;}
+  .common-item{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--line-2);}
+  .common-item:last-child{border-bottom:0;}
+  .common-no{width:20px;height:20px;flex:0 0 20px;border-radius:4px;background:var(--blue-soft);color:var(--blue);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .common-item strong{display:block;font-size:11.5px;line-height:1.4;}
+  .common-item p{color:var(--muted);font-size:10.5px;line-height:1.5;margin-top:1px;}
+
+  .table-wrap{overflow-x:auto;border:1px solid var(--line-2);border-radius:6px;}
+  table{width:100%;border-collapse:collapse;font-size:11.2px;}
+  th,td{text-align:left;vertical-align:top;padding:6px 7px;border-bottom:1px solid var(--line-2);}
+  th{background:var(--panel-2);color:var(--ink-2);font-weight:600;font-size:10.2px;white-space:nowrap;letter-spacing:.03em;}
+  td{color:var(--ink-2);line-height:1.5;}
+  tbody tr:last-child td{border-bottom:0;}
+  tbody tr.row-link{cursor:pointer;}
+  tbody tr.row-link:hover{background:#f8fbfd;}
+  .cell-project{white-space:nowrap;color:var(--ink);font-weight:600;}
+  .cell-nowrap{white-space:nowrap;}
+  .table-note{color:var(--muted);font-size:10.5px;margin:7px 0 0;line-height:1.5;}
+  .matrix td,.matrix th{text-align:center;}
+  .matrix td:first-child,.matrix th:first-child{text-align:left;}
+  .matrix button.badge{border:0;cursor:pointer;}
+  .matrix button.badge:hover{filter:brightness(.96);}
+
+  .detail-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+  .back-link{border:0;background:none;color:var(--blue);font-size:11px;padding:0;}
+  .back-link:hover{text-decoration:underline;}
+  .project-switch{display:flex;gap:4px;flex-wrap:wrap;}
+  .detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:10px;}
+  .detail-head h1{font-size:22px;line-height:1.3;margin:1px 0 3px;}
+  .detail-sub{color:var(--muted);font-size:11.5px;}
+  .detail-badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+  .detail-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 14px;border:1px solid var(--line);background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:10px;box-shadow:var(--shadow);}
+  .detail-meta span{display:block;color:var(--muted);font-size:10.2px;}
+  .detail-meta strong{display:block;color:var(--ink);font-size:11.6px;font-weight:600;line-height:1.45;margin-top:1px;}
+  .stage-timeline{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-bottom:12px;}
+  .stage-card{background:#fff;border:1px solid var(--line);border-top:2px solid var(--line);border-radius:6px;padding:8px 9px;min-width:0;box-shadow:var(--shadow);}
+  .stage-no{color:var(--muted-2);font-size:9.5px;font-variant-numeric:tabular-nums;}
+  .stage-name{font-size:11px;font-weight:600;line-height:1.3;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .stage-date{color:var(--muted);font-size:9.8px;margin-top:3px;font-variant-numeric:tabular-nums;}
+  .stage-status{font-size:9.8px;font-weight:600;margin-top:3px;}
+  .status-note{color:var(--amber);background:var(--amber-soft);border:1px solid #ead9b5;border-radius:5px;padding:6px 9px;font-size:10.5px;margin:0 0 10px;}
+
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:12px 0 12px;overflow-x:auto;}
+  .tab{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:7px 11px;font-size:11.5px;white-space:nowrap;border-radius:4px 4px 0 0;}
+  .tab:hover{color:var(--ink);background:var(--panel-2);}
+  .tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:700;}
+
+  .demo-box{border:1px dashed #b8c9d8;background:#f8fbfd;border-radius:6px;padding:9px 10px;margin:0 0 12px;}
+  .demo-box-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px;}
+  .demo-box-head strong{font-size:11.5px;}
+  .demo-box-head span{font-size:10.2px;color:var(--muted);}
+  .demo-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .demo-note{color:var(--muted);font-size:10.2px;margin-top:6px;}
+
+  .issue-list{display:flex;flex-direction:column;gap:7px;}
+  .issue-card{border:1px solid var(--line);background:#fff;border-radius:6px;padding:9px 10px;cursor:pointer;transition:border-color .14s ease,background .14s ease;}
+  .issue-card:hover{border-color:#b8c9d8;background:#fbfdfe;}
+  .issue-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .issue-card h4{font-size:11.6px;line-height:1.4;margin:0 0 2px;}
+  .issue-meta{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin-top:3px;}
+  .issue-text{color:var(--muted);font-size:10.6px;line-height:1.5;margin-top:4px;}
+  .mini-pill{padding:0 5px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:3px;color:var(--ink-2);font-size:9.8px;line-height:1.7;}
+  .source-links{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;}
+  .source-link{font-size:10.5px;color:var(--blue);border-bottom:1px solid #c8d8e6;padding-bottom:1px;}
+
+  .timeline{position:relative;margin:3px 0 0 5px;padding-left:17px;}
+  .timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:var(--line);}
+  .timeline-item{position:relative;padding:0 0 12px 1px;}
+  .timeline-item::before{content:"";position:absolute;left:-17px;top:5px;width:8px;height:8px;border-radius:50%;background:#fff;border:1.5px solid var(--blue-2);}
+  .timeline-time{color:var(--muted);font-size:10px;font-variant-numeric:tabular-nums;}
+  .timeline-title{color:var(--ink);font-size:11.4px;font-weight:600;line-height:1.4;margin-top:1px;}
+  .timeline-sub{color:var(--muted);font-size:10.4px;line-height:1.5;margin-top:1px;}
+
+  .opinion{max-width:920px;}
+  .opinion-status{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:9px;}
+  .opinion-section{border-top:1px solid var(--line-2);padding:9px 0 2px;}
+  .opinion-section:first-of-type{border-top:0;}
+  .opinion-section h3{font-size:12px;color:var(--blue);margin:0 0 4px;}
+  .opinion-section p{color:var(--ink-2);font-size:11.4px;line-height:1.75;margin:0 0 5px;}
+
+  .filters{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:9px;}
+  .filter-chip{border:1px solid var(--line);background:#fff;color:var(--ink-2);padding:3px 8px;font-size:10.6px;border-radius:5px;}
+  .filter-chip:hover{background:var(--panel-2);}
+  .filter-chip.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .select{border:1px solid var(--line);background:#fff;color:var(--ink-2);padding:4px 6px;font-size:10.7px;border-radius:5px;}
+
+  .rule-layout{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:11px;align-items:start;}
+  .rule-list{padding:8px;max-height:calc(100vh - 230px);overflow:auto;}
+  .rule-item{display:flex;gap:9px;width:100%;border:1px solid transparent;background:transparent;border-radius:6px;padding:8px 9px;text-align:left;color:var(--ink);}
+  .rule-item:hover{background:var(--panel-2);}
+  .rule-item.active{background:var(--blue-soft);border-color:#c9d9e7;}
+  .rule-item-id{font-size:10px;font-weight:700;color:var(--blue);flex:0 0 34px;padding-top:1px;}
+  .rule-item-main{min-width:0;flex:1;}
+  .rule-item-title{font-size:11.6px;font-weight:600;line-height:1.4;}
+  .rule-item-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+  .rule-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;}
+  .rule-detail-head h2{font-size:18px;line-height:1.35;margin-top:2px;}
+  .detail-grid{display:grid;grid-template-columns:92px 1fr;gap:6px 12px;font-size:11.3px;line-height:1.65;}
+  .detail-grid dt{color:var(--muted);}
+  .detail-grid dd{margin:0;color:var(--ink-2);}
+  .rule-block{border-top:1px solid var(--line-2);margin-top:11px;padding-top:10px;}
+
+  .flow-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+  .flow-card{background:#fff;border:1px solid var(--line);border-radius:7px;padding:10px 11px;box-shadow:var(--shadow);min-width:0;}
+  .flow-top{display:flex;align-items:baseline;gap:7px;}
+  .flow-no{font-size:9.8px;color:var(--blue);font-weight:700;font-variant-numeric:tabular-nums;}
+  .flow-name{font-size:12px;font-weight:700;}
+  .flow-block{margin-top:8px;border-left:2px solid var(--blue);padding-left:8px;}
+  .flow-block.human{border-left-color:var(--amber);}
+  .flow-label{font-size:9.5px;letter-spacing:.06em;color:var(--muted-2);text-transform:uppercase;}
+  .flow-text{font-size:10.8px;line-height:1.55;color:var(--ink-2);margin-top:1px;}
+  .flow-out{border-top:1px solid var(--line-2);margin-top:9px;padding-top:7px;font-size:10.5px;color:var(--muted);}
+  .flow-out b{color:var(--ink-2);font-weight:600;}
+
+  .banner{background:linear-gradient(90deg,var(--blue-soft),#f7fbfd);border:1px solid #cfe0ec;border-radius:7px;padding:11px 14px;font-size:12px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;}
+  .banner b{color:var(--blue);}
+
+  .chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .chain-node{background:#fff;border:1px solid var(--line);border-radius:5px;padding:6px 10px;font-size:11.2px;font-weight:600;color:var(--ink);box-shadow:var(--shadow);}
+  .chain-arrow{color:var(--muted-2);font-size:11px;}
+  .layer-stack{display:flex;flex-direction:column;gap:7px;}
+  .layer{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:7px;padding:11px 13px;box-shadow:var(--shadow);}
+  .layer-label{font-size:11.5px;font-weight:700;}
+  .layer-chips{display:flex;flex-wrap:wrap;gap:5px;}
+  .layer-chip{background:var(--panel-2);border:1px solid var(--line-2);border-radius:4px;padding:3px 8px;font-size:10.5px;color:var(--ink-2);}
+  .connector{height:12px;display:flex;align-items:center;justify-content:center;color:var(--muted-2);font-size:10px;}
+
+  .principles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;}
+  .principle{background:#fff;border:1px solid var(--line);border-radius:7px;padding:11px 12px;box-shadow:var(--shadow);}
+  .principle .kicker{margin-bottom:3px;}
+  .principle strong{display:block;font-size:12.5px;}
+  .principle p{color:var(--muted);font-size:10.8px;line-height:1.6;margin-top:3px;}
+
+  .arch-teaser{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(120deg,#f8fbfd,#fff);}
+  .arch-teaser .chips{display:flex;gap:5px;flex-wrap:wrap;}
+
+  .drawer-backdrop{position:fixed;inset:0;background:rgba(18,35,50,.34);z-index:90;backdrop-filter:blur(1px);}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:min(470px,100vw);background:#fff;z-index:91;border-left:1px solid var(--line);display:flex;flex-direction:column;box-shadow:-14px 0 40px rgba(20,40,60,.18);}
+  .drawer-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 16px 11px;border-bottom:1px solid var(--line-2);}
+  .drawer-head h2{font-size:15px;line-height:1.4;margin-top:2px;}
+  .drawer-close{border:0;background:none;color:var(--muted);font-size:23px;line-height:1;padding:0 2px;}
+  .drawer-close:hover{color:var(--ink);}
+  .drawer-body{overflow:auto;padding:13px 16px 24px;}
+  .drawer-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;}
+  .drawer-lead{font-size:12px;line-height:1.7;color:var(--ink-2);}
+  .drawer-section{border-top:1px solid var(--line-2);margin-top:12px;padding-top:11px;}
+  .drawer-section h3{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);margin:0 0 6px;}
+  .drawer-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;padding-top:11px;border-top:1px solid var(--line-2);}
+  .drawer-note{color:var(--muted);font-size:10.2px;line-height:1.55;margin-top:10px;}
+
+  .evidence-list{display:flex;flex-direction:column;gap:5px;}
+  .evidence{display:flex;align-items:flex-start;gap:7px;background:var(--panel-2);border-left:2px solid var(--blue);border-radius:0 5px 5px 0;padding:7px 9px;}
+  .evidence-file{font-size:11px;font-weight:600;color:var(--ink);word-break:break-all;}
+  .evidence-loc{font-size:10.8px;color:var(--muted);}
+  .evidence-copy{margin-left:auto;border:0;background:none;color:var(--blue);font-size:10px;white-space:nowrap;padding:0;}
+
+  .tour-card{position:fixed;right:18px;bottom:18px;z-index:85;width:min(374px,calc(100vw - 28px));background:#fff;border:1px solid #b8c9d8;border-top:3px solid var(--blue);border-radius:7px;padding:12px 13px 11px;box-shadow:0 14px 36px rgba(24,48,72,.20);}
+  .tour-progress{height:3px;background:var(--line-2);border-radius:2px;overflow:hidden;margin:2px 0 8px;}
+  .tour-progress span{display:block;height:100%;background:var(--blue);transition:width .2s ease;}
+  .tour-kicker{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px;margin-bottom:2px;}
+  .tour-kicker strong{color:var(--blue);font-size:10.2px;}
+  .tour-card h3{font-size:13px;line-height:1.4;margin:0 0 3px;}
+  .tour-card p{color:var(--ink-2);font-size:11px;line-height:1.6;margin:0 0 9px;}
+  .tour-actions{display:flex;justify-content:space-between;gap:6px;align-items:center;}
+  .tour-actions > div{display:flex;gap:5px;}
+  .tour-hint{color:var(--muted-2);font-size:9.5px;}
+  .tour-target{outline:3px solid var(--blue-2) !important;outline-offset:4px;box-shadow:0 0 0 7px rgba(61,128,173,.12) !important;border-radius:5px;}
+  .toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#1f3a52;color:#fff;padding:8px 12px;font-size:11.5px;border-radius:5px;box-shadow:0 8px 22px rgba(20,40,60,.22);max-width:380px;line-height:1.5;}
+  .empty{padding:24px 12px;text-align:center;color:var(--muted);font-size:11.5px;border:1px dashed var(--line);border-radius:6px;background:var(--panel-2);}
+  .muted{color:var(--muted);}
+  .small{font-size:10.5px;line-height:1.5;}
+
+  @media (max-width:1180px){
+    .kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .project-grid{grid-template-columns:1fr 1fr;}
+    .grid-3{grid-template-columns:1fr 1fr;}
+    .grid-3 > :last-child{grid-column:1 / -1;}
+    .flow-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .search{width:230px;}
+    .stage-timeline{grid-template-columns:repeat(4,minmax(0,1fr));}
+  }
+  @media (max-width:900px){
+    .app{display:block;}
+    .sidebar{position:static;width:100%;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;border-right:0;border-bottom:1px solid var(--line);padding:10px 12px;gap:9px;}
+    .batch-card{display:none;}
+    .sidebar-note,.sidebar-footer{display:none;}
+    .nav{flex-direction:row;flex-wrap:wrap;gap:2px;width:100%;}
+    .nav-item{border-left:0;border-bottom:2px solid transparent;padding:5px 7px;font-size:11.5px;border-radius:4px 4px 0 0;}
+    .nav-item.active{border-left:0;border-bottom-color:var(--blue);}
+    .nav-count{display:none;}
+    .topbar-inner{padding:8px 12px;flex-wrap:wrap;}
+    .crumbs{flex:1 0 100%;}
+    .top-actions{width:100%;flex-wrap:wrap;}
+    .search{width:100%;order:3;}
+    .view{padding:14px 12px 30px;}
+    .project-grid{grid-template-columns:1fr;}
+    .kpi-grid{grid-template-columns:1fr 1fr;}
+    .grid-3,.grid-2{grid-template-columns:1fr;}
+    .grid-3 > :last-child{grid-column:auto;}
+    .page-head{flex-direction:column;align-items:flex-start;}
+    .detail-head{flex-direction:column;}
+    .detail-badges{justify-content:flex-start;}
+    .detail-meta{grid-template-columns:1fr 1fr;}
+    .stage-timeline{grid-template-columns:1fr 1fr;}
+    .flow-grid{grid-template-columns:1fr 1fr;}
+    .rule-layout{grid-template-columns:1fr;}
+    .rule-list{max-height:none;}
+    .principles{grid-template-columns:1fr;}
+    .layer{grid-template-columns:1fr;gap:6px;}
+    .batch-strip{grid-template-columns:1fr 1fr;}
+    .batch-strip .strip-note{grid-column:1 / -1;border-left:0;padding-left:0;border-top:1px solid var(--line-2);padding-top:6px;}
+    .drawer{width:100vw;}
+  }
+  @media (max-width:560px){
+    .flow-grid,.kpi-grid{grid-template-columns:1fr;}
+    .detail-meta{grid-template-columns:1fr;}
+    .tour-card{right:10px;bottom:10px;}
+    .toast{right:10px;bottom:10px;}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .project-card,.issue-card,.kpi,.nav-item,.btn,.tab{transition:background .14s ease,border-color .14s ease,color .14s ease,transform .14s ease,box-shadow .14s ease;}
+    .drawer{animation:drawerIn .18s ease;}
+    @keyframes drawerIn{from{transform:translateX(26px);opacity:.5;}to{transform:translateX(0);opacity:1;}}
+  }
+  @media print{
+    @page{size:A4 portrait;margin:11mm;}
+    body{background:#fff;color:#000;font-size:9.4pt;}
+    .sidebar,.topbar,.demo-box,.tour-card,.drawer,.drawer-backdrop,.toast,.no-print,.page-actions,.filters,.back-link,.tabs,.project-switch,.evidence-copy,.source-links{display:none !important;}
+    .app,.main{display:block;}
+    .view{max-width:none;padding:0;}
+    .panel,.project-card,.kpi,.detail-meta,.detail-progress,.stage-card,.flow-card,.principle{box-shadow:none;break-inside:avoid;}
+    .project-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .grid-3,.grid-2{grid-template-columns:1fr 1fr;}
+    .flow-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+    .kpi-grid{grid-template-columns:repeat(6,minmax(0,1fr));}
+    a{color:#000;text-decoration:none;}
+    .print-head{display:block !important;margin-bottom:8mm;}
+  }
+  .print-head{display:none;}
+
+/* ---------- fiscal review additions (on top of the shared workbench CSS) ---------- */
+.project-card .method-line{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.45;}
+.project-card .amount-line{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;margin-top:2px;}
+.project-card .amount-line strong{font-size:15px;font-variant-numeric:tabular-nums;}
+.project-card .amount-line .arrow{color:var(--muted-2);font-size:11px;}
+.project-card .amount-line .cut{color:var(--red);font-size:11px;font-weight:600;}
+
+.ai-badge{color:var(--violet);background:var(--violet-soft);border-color:#d9d4ea;}
+.decision-ok{color:var(--green);background:var(--green-soft);border-color:#cfe3d8;}
+.decision-wait{color:var(--amber);background:var(--amber-soft);border-color:#ead9b5;}
+.decision-no{color:var(--red);background:var(--red-soft);border-color:#eccfc8;}
+.type-none{color:var(--red);background:var(--red-soft);border-color:#eccfc8;}
+
+.amount-strong{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;}
+.reduction{color:var(--red);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.rate-value{color:var(--amber);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+.table-compact{font-size:10.7px;}
+.table-compact th,.table-compact td{padding:5px 6px;line-height:1.45;}
+.table-compact th{font-size:9.8px;}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.table-total td{background:var(--panel-2);font-weight:700;color:var(--ink);}
+.table-subnote{color:var(--muted);font-size:10px;line-height:1.45;margin-top:4px;}
+
+.bar-row{display:grid;grid-template-columns:118px minmax(0,1fr) 108px;gap:9px;align-items:center;margin:8px 0;}
+.bar-label{font-size:10.8px;color:var(--ink-2);line-height:1.35;}
+.bar-track{height:8px;background:var(--line-2);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;background:var(--blue-2);}
+.bar-fill.green{background:var(--green);}
+.bar-text{font-size:10.2px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+
+.qa-item{border:1px solid var(--line);background:#fff;border-radius:6px;padding:9px 10px;margin-bottom:6px;cursor:pointer;transition:background .14s ease,border-color .14s ease;}
+.qa-item:hover{border-color:#b8c9d8;background:#fbfdfe;}
+.qa-item.active{border-color:#b8c9d8;background:var(--blue-soft);}
+.qa-q{font-size:11.6px;font-weight:600;line-height:1.45;}
+.qa-a{font-size:11.4px;line-height:1.7;color:var(--ink-2);margin-top:6px;}
+.cite{display:inline-block;font-size:10px;color:var(--blue);background:var(--blue-soft);border:1px solid #c9d9e7;border-radius:4px;padding:1px 6px;margin:3px 4px 0 0;line-height:1.6;}
+.cite-wrap{margin-top:7px;}
+
+.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.source-card{background:#fff;border:1px solid var(--line);border-radius:7px;padding:11px 12px;box-shadow:var(--shadow);cursor:pointer;}
+.source-card:hover{border-color:#b8c9d8;background:#fbfdfe;}
+.source-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.source-name{font-size:11.6px;font-weight:700;}
+.source-count{font-size:22px;line-height:1.2;font-weight:700;font-variant-numeric:tabular-nums;color:var(--blue);}
+.source-desc{color:var(--muted);font-size:10.3px;line-height:1.5;margin-top:3px;}
+.source-meta{color:var(--muted-2);font-size:9.8px;margin-top:4px;}
+
+.version-track{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;}
+.version-card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--line);border-radius:7px;padding:10px 12px;cursor:pointer;box-shadow:var(--shadow);}
+.version-card:hover{border-color:#b8c9d8;background:#fbfdfe;}
+.version-card.active{border-color:#b8c9d8;border-top-color:var(--blue);background:var(--blue-soft);}
+.version-card .v-id{font-size:10px;color:var(--muted-2);font-variant-numeric:tabular-nums;}
+.version-card .v-label{font-size:11.6px;font-weight:700;margin-top:2px;}
+.version-total{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25;margin-top:2px;}
+.version-diff{font-size:10px;color:var(--muted);margin-top:2px;}
+.comment-list{margin:0;padding-left:17px;color:var(--ink-2);font-size:10.9px;line-height:1.7;}
+.comment-list li{margin-bottom:4px;}
+
+.calc-row{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch;}
+.calc-step{flex:1 1 150px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:6px;padding:8px 10px;min-width:0;}
+.calc-step span{display:block;font-size:9.6px;color:var(--muted-2);letter-spacing:.04em;}
+.calc-step strong{display:block;font-size:13.5px;font-variant-numeric:tabular-nums;margin-top:2px;}
+.calc-step em{display:block;font-style:normal;font-size:9.8px;color:var(--muted);margin-top:2px;line-height:1.4;}
+
+.method-strip{display:flex;gap:6px;flex-wrap:wrap;}
+.method-chip{background:#fff;border:1px solid var(--line);border-radius:5px;padding:4px 9px;font-size:10.5px;color:var(--ink-2);}
+.method-chip b{color:var(--blue);font-weight:600;}
+
+.tag{display:inline-block;padding:0 5px;margin:1px 3px 1px 0;border-radius:3px;background:var(--panel-2);border:1px solid var(--line-2);color:var(--muted);font-size:9.6px;line-height:1.7;}
+
+.drawer-amounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;}
+.drawer-amount{background:var(--panel-2);border:1px solid var(--line-2);border-radius:6px;padding:7px 9px;}
+.drawer-amount span{display:block;font-size:9.6px;color:var(--muted-2);}
+.drawer-amount strong{display:block;font-size:13px;font-variant-numeric:tabular-nums;margin-top:1px;}
+
+.fp-focus{border:1px solid #cfe0ec;background:linear-gradient(90deg,var(--blue-soft),#fbfdfe);border-radius:7px;padding:10px 12px;margin-bottom:10px;font-size:11.2px;line-height:1.65;color:var(--ink-2);}
+.fp-focus b{color:var(--blue);}
+
+.tech-matrix td,.tech-matrix th{text-align:center;}
+.tech-matrix td:first-child,.tech-matrix th:first-child{text-align:left;}
+
+.info-banner{background:linear-gradient(90deg,var(--blue-soft),#f7fbfd);border:1px solid #cfe0ec;border-radius:7px;padding:10px 13px;font-size:11.4px;line-height:1.65;color:var(--ink-2);margin-bottom:11px;}
+.info-banner b{color:var(--blue);}
+
+.kpi .kpi-sub{font-size:9.8px;color:var(--muted-2);margin-top:1px;}
+.kpi .kpi-sub.good{color:var(--green);}
+
+.mini-chart-note{color:var(--muted);font-size:10.2px;line-height:1.5;margin-top:7px;border-top:1px solid var(--line-2);padding-top:6px;}
+
+.section-link{border:0;background:none;color:var(--blue);font-size:10.5px;padding:0;white-space:nowrap;}
+.section-link:hover{text-decoration:underline;}
+
+.row-open{cursor:pointer;}
+.row-open:hover{background:#f8fbfd;}
+
+@media (max-width:1180px){
+  .source-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:900px){
+  .source-grid{grid-template-columns:1fr 1fr;}
+  .bar-row{grid-template-columns:96px minmax(0,1fr) 92px;}
+  .drawer-amounts{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:560px){
+  .source-grid{grid-template-columns:1fr;}
+  .bar-row{grid-template-columns:82px minmax(0,1fr) 78px;}
+  .bar-label{font-size:9.8px;}
+  .bar-text{font-size:9.2px;}
+  .version-track{grid-template-columns:1fr;}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">中</span>
+      <span><strong>中通服项目评审工作台</strong><small>财政评审 · 软件造价审核</small></span>
+    </div>
+    <div class="batch-card">
+      <span class="kicker">本批判次</span>
+      <strong>2026 年第三季度 · 财政评审</strong>
+      <em>6 个项目 · 送审 1,694 万</em>
+    </div>
+    <nav class="nav" aria-label="工作台导航">
+      <button class="nav-item active" data-go="overview" data-nav="overview">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg>
+        <span>批次总览</span><span class="nav-count">6</span>
+      </button>
+      <button class="nav-item" data-go="projects" data-nav="projects">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h3l1.5 2h6.5A1.5 1.5 0 0 1 17 8.5v6A1.5 1.5 0 0 1 15.5 16h-11A1.5 1.5 0 0 1 3 14.5v-8Z"/></svg>
+        <span>项目卷宗</span><span class="nav-count">6</span>
+      </button>
+      <button class="nav-item" data-go="fp/A" data-nav="fp">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1.5"/><path d="M6.5 7h7M6.5 10h7M6.5 13h4"/><path d="M14.5 14.5 17 17"/></svg>
+        <span>功能点审核</span><span class="nav-count">86</span>
+      </button>
+      <button class="nav-item" data-go="cost/B" data-nav="cost">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16V5.5A1.5 1.5 0 0 1 5.5 4H15v12H5.5A1.5 1.5 0 0 1 4 14.5Z"/><path d="M4 14.5A1.5 1.5 0 0 1 5.5 13H15"/><path d="M8 8h4M8 10.5h3"/></svg>
+        <span>费用审核</span><span class="nav-count">12</span>
+      </button>
+      <button class="nav-item" data-go="tech" data-nav="tech">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1.5"/><path d="m6 10 2.2 2.2L14 6.8"/></svg>
+        <span>技术评审</span><span class="nav-count">17</span>
+      </button>
+      <button class="nav-item" data-go="kb" data-nav="kb">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="10" cy="5" rx="6" ry="2.4"/><path d="M4 5v5c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4V5"/><path d="M4 10v5c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4v-5"/></svg>
+        <span>知识库</span><span class="nav-count">6</span>
+      </button>
+      <button class="nav-item" data-go="audit/A" data-nav="audit">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1.5"/><path d="M3 8h14M8 8v9M8 3v5"/></svg>
+        <span>审定表</span><span class="nav-count">6</span>
+      </button>
+      <button class="nav-item" data-go="arch" data-nav="arch">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m10 3 7 3.5-7 3.5-7-3.5L10 3Z"/><path d="m3 10 7 3.5 7-3.5"/><path d="m3 13.5 7 3.5 7-3.5"/></svg>
+        <span>架构</span>
+      </button>
+    </nav>
+    <div class="sidebar-note">
+      合成演示：项目、金额、功能点和专家意见均不对应真实项目。AI 建议只作初稿，结论由评审人确认。
+    </div>
+    <div class="sidebar-footer">中通服评审中心 · 财政评审 · 内网部署</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="crumbs" id="crumbs">批次总览</div>
+        <div class="top-actions">
+          <span class="demo-pill" id="demoPill" hidden>演示状态已改变</span>
+          <span class="badge tone-green" style="font-size:10px;">内网部署</span>
+          <div class="search">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="8.5" r="5"/><path d="m12.2 12.2 4.3 4.3"/></svg>
+            <input id="globalSearch" type="search" autocomplete="off" placeholder="搜索项目、功能点、费用项、依据  /" aria-label="搜索项目、功能点、费用项或依据">
+            <div class="search-results" id="searchResults" hidden></div>
+          </div>
+          <button class="btn btn-ghost" id="tourTopBtn" data-action="start-tour">▶ 5 分钟导览</button>
+          <button class="btn" data-action="print">打印</button>
+          <button class="btn" data-action="reset-demo">重置</button>
+        </div>
+      </div>
+    </header>
+    <main class="view" id="view"></main>
+    <noscript><div style="padding:20px;color:#66798b;font-size:12px;">此工作台需要启用 JavaScript 才能交互；请允许脚本后刷新页面。</div></noscript>
+    <footer class="app-footer" style="max-width:1400px;width:100%;margin:0 auto;padding:10px 22px 18px;color:var(--muted);font-size:10.5px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+      <span>中通服项目评审工作台 · 合成演示 · 数据不出内网</span>
+      <span>依据：标准规范 / 历史案例 / 合同 / 采购价 / 专家意见</span>
+    </footer>
+  </div>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-hidden="true" aria-labelledby="drawerTitle" role="dialog" aria-modal="true">
+  <div class="drawer-head">
+    <div><span class="kicker" id="drawerKicker">详情</span><h2 id="drawerTitle"></h2></div>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">×</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<div class="tour-card" id="tourCard" hidden aria-live="polite">
+  <div class="tour-kicker"><span>互动导览</span><strong id="tourStepLabel">1 / 7</strong></div>
+  <div class="tour-progress"><span id="tourProgress" style="width:14.2%"></span></div>
+  <h3 id="tourTitle"></h3>
+  <p id="tourText"></p>
+  <div class="tour-actions">
+    <button class="btn btn-sm" data-action="exit-tour">退出</button>
+    <div>
+      <span class="tour-hint">← → 切换</span>
+      <button class="btn btn-sm" data-action="prev-tour" id="tourPrev">上一步</button>
+      <button class="btn btn-primary btn-sm" data-action="next-tour" id="tourNext">下一步</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const DATA = {"meta":{"brand":"中通服项目评审工作台","owner":"中通服评审中心","batch":"2026 年第三季度信息化项目评审（合成）","clients":"广东省财政厅及地市财政 · 南方电网 · 广东烟草","date":"2026-10-19","version":"v1.0","note":"本批项目、单位、金额、功能点和专家意见均为合成示例，仅用于演示，不对应真实项目。"},"stages":["接件","形式审查","审核","内部复核","专家意见","定稿","归档"],"stats":{"projects":6,"submitted":1694,"approved":1133,"reduction":561,"rate":33.1,"highRisk":2,"kbHit":82,"evidence":96},"projects":[{"stageIndex":5,"riskKey":"high","statusTone":"green","materials":[{"name":"报价书","pages":42,"type":"PDF","ocr":"已解析","note":"含功能清单和分项报价"},{"name":"功能清单","pages":86,"type":"Excel","ocr":"已解析","note":"86 项功能点原始清单"},{"name":"需求规格说明书","pages":120,"type":"PDF","ocr":"已 OCR","note":"功能描述与数据组边界"},{"name":"专家意见","pages":5,"type":"Word","ocr":"已结构化","note":"2026-10-08 专家会"},{"name":"会议纪要","pages":1,"type":"录音/转写","ocr":"已转写","note":"2026-09-18 专家会"}],"functions":[{"id":"A-01","name":"用户管理","desc":"用户、角色、组织、权限的统一管理，含新增、修改、停用、查询。","proposedType":"ILF","approvedType":"ILF","rawFP":18,"firstFP":10,"approvedFP":8,"submittedAmount":45,"firstAmount":30,"approvedAmount":24,"adjustment":"过度拆分","reason":"用户、角色、组织拆成 3 个 ILF，实际共享同一数据组，合并为 1 个 ILF。","basis":{"source":"标准规范（示例）","clause":"ILF 定义：在本系统内维护、可独立增删改的数据组","excerpt":"外部系统只读引用的数据组属于 EIF；报表、查询、统计展示属于事务功能，财政两点法不计。"},"caseRef":"CASE-2025-037 某厅局用户管理模块审减 42%","aiSuggestion":"合并 3 项为 1 项","confidence":0.91,"decision":"已采纳"},{"id":"A-02","name":"事项管理","desc":"事项配置、流程编排、状态流转和办件查询。","proposedType":"EIF","approvedType":"ILF","rawFP":14,"firstFP":9,"approvedFP":8,"submittedAmount":36,"firstAmount":30,"approvedAmount":24,"adjustment":"分类修正","reason":"事项数据在本系统内维护，不是外部系统只读接口，应由 EIF 改判 ILF；金额按合并后口径重算。","basis":{"source":"标准规范（示例）","clause":"EIF 定义：本系统只读引用的外部系统数据组","excerpt":"若数据在本系统内维护，应改判 ILF；仅引用外部数据且不维护的，计 EIF。"},"caseRef":"CASE-2026-014 某市事项管理 EIF 改判 ILF","aiSuggestion":"改判 ILF","confidence":0.84,"decision":"已采纳"},{"id":"A-03","name":"支付接口","desc":"对接财政非税支付平台，只读查询支付结果。","proposedType":"EIF","approvedType":"EIF","rawFP":8,"firstFP":8,"approvedFP":8,"submittedAmount":24,"firstAmount":24,"approvedAmount":24,"adjustment":"符合","reason":"外部系统只读引用，分类和金额均成立。","basis":{"source":"标准规范（示例）","clause":"EIF 定义：本系统只读引用的外部系统数据组","excerpt":"若数据在本系统内维护，应改判 ILF；仅引用外部数据且不维护的，计 EIF。"},"caseRef":"—","aiSuggestion":"保留","confidence":0.95,"decision":"已采纳"},{"id":"A-04","name":"报表查询","desc":"按事项、时间、部门组合查询并导出报表。","proposedType":"ILF","approvedType":"不计（事务功能）","rawFP":10,"firstFP":4,"approvedFP":0,"submittedAmount":30,"firstAmount":12,"approvedAmount":0,"adjustment":"不计（事务功能）","reason":"报表查询是事务功能，财政两点法只计 ILF/EIF，不计入功能点。","basis":{"source":"财政两点法口径（示例）","clause":"只计 ILF / EIF，事务功能不计","excerpt":"报表查询、统计大屏、消息展示等事务功能，不构成可独立维护的数据组，不计入两点法功能点。"},"caseRef":"2026-09-18 专家会纪要：报表查询不计 ILF","aiSuggestion":"不计（事务功能）","confidence":0.78,"decision":"待确认"},{"id":"A-05","name":"数据同步","desc":"与支付接口、地图接口之间的数据同步任务。","proposedType":"EIF","approvedType":"不计（重复）","rawFP":8,"firstFP":0,"approvedFP":0,"submittedAmount":24,"firstAmount":0,"approvedAmount":0,"adjustment":"重复删除","reason":"与支付接口、第三方地图接口重复，不单独计功能点。","basis":{"source":"标准规范（示例）","clause":"EIF 定义：本系统只读引用的外部系统数据组","excerpt":"若数据在本系统内维护，应改判 ILF；仅引用外部数据且不维护的，计 EIF。"},"caseRef":"CASE-2026-019 某市接口重复计列","aiSuggestion":"删除重复","confidence":0.88,"decision":"已采纳"},{"id":"A-06","name":"权限配置","desc":"菜单、按钮、数据权限配置。","proposedType":"ILF","approvedType":"ILF","rawFP":10,"firstFP":6,"approvedFP":4,"submittedAmount":30,"firstAmount":18,"approvedAmount":12,"adjustment":"过度拆分","reason":"从用户管理中拆出，数据组不独立；合并后保留 4 FP。","basis":{"source":"标准规范（示例）","clause":"ILF 定义：在本系统内维护、可独立增删改的数据组","excerpt":"外部系统只读引用的数据组属于 EIF；报表、查询、统计展示属于事务功能，财政两点法不计。"},"caseRef":"CASE-2025-037 某厅局用户管理模块审减 42%","aiSuggestion":"合并","confidence":0.82,"decision":"已采纳"},{"id":"A-07","name":"日志审计","desc":"操作日志、登录日志记录与查询。","proposedType":"ILF","approvedType":"不计（无独立数据组）","rawFP":8,"firstFP":4,"approvedFP":0,"submittedAmount":24,"firstAmount":12,"approvedAmount":0,"adjustment":"无独立数据组","reason":"日志依附于业务表，不能独立维护，不构成 ILF。","basis":{"source":"标准规范（示例）","clause":"ILF 定义：在本系统内维护、可独立增删改的数据组","excerpt":"外部系统只读引用的数据组属于 EIF；报表、查询、统计展示属于事务功能，财政两点法不计。"},"caseRef":"CASE-2026-021 某局日志审计不计 ILF","aiSuggestion":"删除","confidence":0.74,"decision":"已采纳"},{"id":"A-08","name":"移动端适配","desc":"移动端页面适配、响应式改造。","proposedType":"ILF","approvedType":"不计（非数据功能）","rawFP":12,"firstFP":8,"approvedFP":0,"submittedAmount":36,"firstAmount":24,"approvedAmount":0,"adjustment":"非数据功能","reason":"适配是技术实现，不构成独立数据组。","basis":{"source":"标准规范（示例）","clause":"ILF 定义：在本系统内维护、可独立增删改的数据组","excerpt":"外部系统只读引用的数据组属于 EIF；报表、查询、统计展示属于事务功能，财政两点法不计。"},"caseRef":"2026-09-18 专家会纪要：适配不计功能点","aiSuggestion":"删除（非数据功能）","confidence":0.86,"decision":"待确认"},{"id":"A-09","name":"第三方地图接口","desc":"只读调用第三方地图服务。","proposedType":"EIF","approvedType":"EIF","rawFP":6,"firstFP":6,"approvedFP":6,"submittedAmount":18,"firstAmount":18,"approvedAmount":18,"adjustment":"符合","reason":"外部只读接口，分类和金额成立。","basis":{"source":"标准规范（示例）","clause":"EIF 定义：本系统只读引用的外部系统数据组","excerpt":"若数据在本系统内维护，应改判 ILF；仅引用外部数据且不维护的，计 EIF。"},"caseRef":"—","aiSuggestion":"保留","confidence":0.93,"decision":"已采纳"},{"id":"A-10","name":"消息推送","desc":"短信、站内信、模板消息推送。","proposedType":"EIF","approvedType":"EIF","rawFP":5,"firstFP":5,"approvedFP":5,"submittedAmount":15,"firstAmount":15,"approvedAmount":15,"adjustment":"符合","reason":"外部只读接口，分类和金额成立。","basis":{"source":"标准规范（示例）","clause":"EIF 定义：本系统只读引用的外部系统数据组","excerpt":"若数据在本系统内维护，应改判 ILF；仅引用外部数据且不维护的，计 EIF。"},"caseRef":"—","aiSuggestion":"保留","confidence":0.92,"decision":"已采纳"},{"id":"A-11","name":"统计大屏","desc":"办件量、满意度、趋势统计展示。","proposedType":"ILF","approvedType":"不计（事务功能）","rawFP":14,"firstFP":6,"approvedFP":0,"submittedAmount":42,"firstAmount":18,"approvedAmount":0,"adjustment":"不计（事务功能）","reason":"展示类事务功能，不是可独立维护的数据组。","basis":{"source":"财政两点法口径（示例）","clause":"只计 ILF / EIF，事务功能不计","excerpt":"报表查询、统计大屏、消息展示等事务功能，不构成可独立维护的数据组，不计入两点法功能点。"},"caseRef":"2026-09-18 专家会纪要：统计展示不计 ILF","aiSuggestion":"不计（事务功能）","confidence":0.81,"decision":"已采纳"},{"id":"A-12","name":"历史数据迁移","desc":"旧系统历史办件数据迁移、清洗、校验。","proposedType":"ILF","approvedType":"不计（一次性）","rawFP":18,"firstFP":0,"approvedFP":0,"submittedAmount":54,"firstAmount":0,"approvedAmount":0,"adjustment":"一次性不计","reason":"一次性迁移，不属于持续维护的功能点。","basis":{"source":"标准规范（示例）","clause":"一次性迁移/初始化不计功能点","excerpt":"历史数据迁移属于一次性实施工作，不是持续维护的功能点，不计入软件开发投资。"},"caseRef":"CASE-2026-027 某市历史迁移不计功能点","aiSuggestion":"删除（一次性）","confidence":0.89,"decision":"已采纳"}],"costItems":[],"techIssues":[{"id":"T-A-01","category":"一致性","severity":"高","finding":"需求规格 4.2 功能清单与报价书 86 项不一致，报价书多 6 项。","evidence":"需求规格 P42 vs 报价书 P8","status":"待修改"},{"id":"T-A-02","category":"架构","severity":"中","finding":"数据架构章节缺失，未说明数据组边界和主数据来源。","evidence":"技术方案目录 P3","status":"待修改"},{"id":"T-A-03","category":"绩效","severity":"中","finding":"绩效指标只有“提升效率”，缺用户数、并发、吞吐量等量化指标。","evidence":"可研报告 P56","status":"已闭环"},{"id":"T-A-04","category":"形式","severity":"中","finding":"项目命名与审批细则命名规则不一致；立项函缺函号。","evidence":"审批细则 P2 vs 立项函","status":"待修改"},{"id":"T-A-05","category":"依据","severity":"中","finding":"政策依据引用已过期规划（十三五），未衔接最新省级文件要点，牛头不对马嘴。","evidence":"可研报告 P10-P12","status":"待修改"}],"versions":[{"id":"V1","label":"初稿","date":"2026-09-20","total":269,"note":"按两点法逐项复核，形成送审/审定对比。","comments":[]},{"id":"V2","label":"修改稿","date":"2026-10-08","total":214,"note":"专家意见 5 条，完成合并、改判、删除。","comments":["用户管理/权限配置合并，审减 24 万。","事项管理改判 ILF，金额不变，依据补齐。","报表查询、统计大屏不计入 ILF，审减 30 万。","历史数据迁移属一次性，审减 54 万。","移动端适配不构成独立数据组，审减 24 万。"]},{"id":"V3","label":"定稿","date":"2026-10-16","total":193,"note":"专家意见全部闭环，版本锁定，出审定表。","comments":["专家意见全部闭环。","审定表签字版归档。"]}],"id":"A","name":"省一体化政务服务平台（二期）软件开发","client":"广东省财政厅","category":"软件开发","method":"财政两点法（ILF + EIF）","methodKey":"two","submitted":558,"firstApproved":269,"approved":193,"stage":"定稿","risk":"高","statusLabel":"定稿 · 已出审定表","updated":"2026-10-16","owner":"省政务服务和数据管理局（合成）","reviewer":"中通服评审组","expert":"专家库（5 人）","summary":"86 项功能点，合并 12 项过度拆分、修正 3 项 EIF/ILF 误判、删除 2 项重复、剔除 1 项无依据；初稿 269 万，专家意见后定稿 193 万。","conclusion":"审定 193 万；只出审定表，不提整改建议；甲方按审定价招标。","next":"归档审定表；锁定 V3；专家意见闭环。","fpSummary":{"submittedFP":186,"firstFP":90,"approvedFP":64,"items":86,"approvedItems":74,"overSplit":12,"reclass":3,"duplicate":2,"excluded":1,"unit":"综合单价约 3.0 万元/FP（演示参数）"},"reduction":365,"rate":65.4},{"stageIndex":3,"riskKey":"mid","statusTone":"amber","materials":[{"name":"报价书","pages":28,"type":"PDF","ocr":"已解析","note":"含 4 项费用明细"},{"name":"软件租赁合同","pages":36,"type":"PDF","ocr":"已 OCR","note":"缺附件 2 页"},{"name":"采购网询价","pages":6,"type":"截图","ocr":"已结构化","note":"2026-08 同期均价"},{"name":"机房现状","pages":8,"type":"Word","ocr":"已解析","note":"机柜、电力、网络现状"}],"functions":[],"costItems":[{"id":"B-01","name":"服务器","spec":"2×Xeon / 512G / 8×3.84T","qty":40,"unit":"台","unitPrice":3.0,"submitted":120,"firstAmount":114,"approvedAmount":108,"priceSource":"政府采购网 2026-08 均价 2.7 万/台","basis":{"source":"政府采购网（示例）","clause":"同期同类均价","excerpt":"报价高于同期政府采购网均价的部分，按均价审减；需提供合同和询价记录。"},"adjustment":"价格审减","reason":"报价 3.0 万/台，高于采购网均价 10%，按 2.7 万/台审定。"},{"id":"B-02","name":"存储","spec":"分布式存储 200TB","qty":200,"unit":"TB","unitPrice":0.4,"submitted":80,"firstAmount":76,"approvedAmount":72,"priceSource":"政府采购网 2026-08 均价 0.36 万/TB","basis":{"source":"政府采购网（示例）","clause":"同期同类均价","excerpt":"报价高于同期政府采购网均价的部分，按均价审减；需提供合同和询价记录。"},"adjustment":"价格审减","reason":"报价 0.4 万/TB，高于均价 11%，按 0.36 万/TB 审定。"},{"id":"B-03","name":"网络设备","spec":"核心/汇聚/接入","qty":1,"unit":"批","unitPrice":60,"submitted":60,"firstAmount":57,"approvedAmount":54,"priceSource":"历史合同 2025-11 + 采购网","basis":{"source":"政府采购网（示例）","clause":"同期同类均价","excerpt":"报价高于同期政府采购网均价的部分，按均价审减；需提供合同和询价记录。"},"adjustment":"价格审减","reason":"部分型号高于历史合同价，按低价审定。"},{"id":"B-04","name":"软件租赁","spec":"办公套件/安全组件 3 年","qty":3,"unit":"年","unitPrice":53.3,"submitted":160,"firstAmount":133,"approvedAmount":122,"priceSource":"采购网 2026-08 + 合同第 3.2 条","basis":{"source":"合同（示例）","clause":"服务范围与报价一致性","excerpt":"合同范围外的服务不计；合同缺页、附件不全的，先补正再审定。"},"adjustment":"合同 + 价格审减","reason":"合同缺附件 2 页，报价高于采购网 12%，按采购网价并扣除缺页服务审定。"}],"techIssues":[{"id":"T-B-01","category":"材料","severity":"高","finding":"软件租赁合同缺第 3.2 条附件 2 页，服务范围无法完整核对。","evidence":"合同 P18-P19","status":"待补正"},{"id":"T-B-02","category":"价格","severity":"高","finding":"服务器、存储报价分别高于采购网均价 10% 和 11%。","evidence":"报价书 P8 vs 采购网截图","status":"已闭环"},{"id":"T-B-03","category":"一致性","severity":"中","finding":"机柜数量与机房现状不符，扩容后电力容量不足。","evidence":"机房现状 P4","status":"待修改"}],"versions":[{"id":"V1","label":"初稿","date":"2026-10-05","total":380,"note":"按采购网均价初核。","comments":[]},{"id":"V2","label":"复核稿","date":"2026-10-17","total":356,"note":"补充合同缺页、租赁价格复核。","comments":["租赁软件缺页部分不计，审减 11 万。","服务器/存储按采购网均价审减 13 万。"]}],"id":"B","name":"某市政务云基础设施扩容及软件租赁","client":"广东省财政厅（地市）","category":"基础设施 / 租用软件","method":"采购价 + 合同审核","methodKey":"cost","submitted":420,"firstApproved":380,"approved":356,"stage":"内部复核","risk":"中","statusLabel":"复核中","updated":"2026-10-17","owner":"某市政务服务数据管理局（合成）","reviewer":"中通服评审组","expert":"价格/合同专家","summary":"4 项费用：服务器/存储/网络按采购网低价，租赁软件合同缺页且高于采购网 12%；审定 356 万。","conclusion":"审定 356 万；合同缺页和高于采购网部分已审减。","next":"补齐合同附件，出审定表。","reduction":64,"rate":15.2},{"stageIndex":3,"riskKey":"mid","statusTone":"amber","materials":[{"name":"运维方案","pages":32,"type":"PDF","ocr":"已解析","note":"服务内容/SLA/人员"},{"name":"服务清单","pages":18,"type":"Excel","ocr":"已解析","note":"缺 3 项服务"},{"name":"历史合同","pages":24,"type":"PDF","ocr":"已 OCR","note":"上一年度运维合同"}],"functions":[],"costItems":[{"id":"C-01","name":"基础运维","spec":"主机/存储/网络/数据库","qty":1,"unit":"年","unitPrice":120,"submitted":120,"firstAmount":107,"approvedAmount":98,"priceSource":"运维基数 1,500 万 × 6.5%","basis":{"source":"运维评审细则（示例）","clause":"保修期内 / 保修期外比例","excerpt":"保修期内按 8%，保修期外按 6.5%；本项目已过保修期，应按 6.5% 重算。"},"adjustment":"比例审减","reason":"申报按保修期内 8% 计算；项目已过保修期，应按 6.5% 重算。"},{"id":"C-02","name":"安全运维","spec":"等保/漏洞/监测","qty":1,"unit":"年","unitPrice":60,"submitted":60,"firstAmount":53,"approvedAmount":44,"priceSource":"运维基数 1,500 万 × 6.5% 中的安全部分","basis":{"source":"运维评审细则（示例）","clause":"保修期内 / 保修期外比例","excerpt":"保修期内按 8%，保修期外按 6.5%；本项目已过保修期，应按 6.5% 重算。"},"adjustment":"比例审减","reason":"安全运维随基础运维比例同步调整，剔除重复监测项。"}],"techIssues":[{"id":"T-C-01","category":"比例","severity":"高","finding":"运维比例按保修期内 8% 计算，项目已过保修期，应适用 6.5%。","evidence":"运维方案 P6","status":"已闭环"},{"id":"T-C-02","category":"绩效","severity":"中","finding":"SLA 指标不可量化，缺可用率、响应时间、恢复时间。","evidence":"运维方案 P18","status":"待修改"},{"id":"T-C-03","category":"材料","severity":"中","finding":"服务清单缺 3 项，与运维方案章节不一致。","evidence":"服务清单 P2","status":"待补正"}],"versions":[{"id":"V1","label":"初稿","date":"2026-10-06","total":160,"note":"按 8% 初步测算。","comments":[]},{"id":"V2","label":"复核稿","date":"2026-10-17","total":142,"note":"按 6.5% 重算，剔除重复项。","comments":["比例从 8% 调整为 6.5%，审减 18 万。"]}],"id":"C","name":"某厅局信息系统运维服务（2026—2027）","client":"广东省财政厅","category":"运维","method":"运维比例标准","methodKey":"cost","submitted":180,"firstApproved":160,"approved":142,"stage":"内部复核","risk":"中","statusLabel":"复核中","updated":"2026-10-17","owner":"某厅局信息中心（合成）","reviewer":"中通服评审组","expert":"运维专家","summary":"运维比例按保修期外 6.5% 重算，基础运维+安全运维审定 142 万。","conclusion":"审定 142 万；按保修期外比例执行。","next":"复核 SLA 指标，出审定表。","reduction":38,"rate":21.1},{"stageIndex":4,"riskKey":"high","statusTone":"blue","materials":[{"name":"运营方案","pages":40,"type":"PDF","ocr":"已解析","note":"内容/活动/数据三块"},{"name":"人员配置","pages":6,"type":"Excel","ocr":"已解析","note":"12 人名单与单价"},{"name":"活动清单","pages":12,"type":"Word","ocr":"已解析","note":"4 场活动方案"}],"functions":[],"costItems":[{"id":"D-01","name":"内容运营","spec":"12 人→9 人，250 人天","qty":9,"unit":"人","unitPrice":10.7,"submitted":120,"firstAmount":110,"approvedAmount":96,"priceSource":"人天单价 2,600 元 × 工作量","basis":{"source":"运营评审口径（示例）","clause":"人头 / 人天 / 工作量对标","excerpt":"运营无统一标准，按人头、人天和实际工作量对标；增值配置需有依据，专家确认。"},"adjustment":"人头核减","reason":"12 人配置与内容更新量不匹配，按 9 人核定。"},{"id":"D-02","name":"活动运营","spec":"4 场/年，含策划/执行/复盘","qty":4,"unit":"场","unitPrice":20,"submitted":80,"firstAmount":74,"approvedAmount":64,"priceSource":"历史活动合同 + 人天","basis":{"source":"运营评审口径（示例）","clause":"人头 / 人天 / 工作量对标","excerpt":"运营无统一标准，按人头、人天和实际工作量对标；增值配置需有依据，专家确认。"},"adjustment":"单价审减","reason":"单场报价高于历史合同 15%，按历史均价审定。"},{"id":"D-03","name":"数据运营","spec":"数据治理/分析/月报","qty":1,"unit":"年","unitPrice":60,"submitted":60,"firstAmount":56,"approvedAmount":50,"priceSource":"人天 + 历史项目","basis":{"source":"运营评审口径（示例）","clause":"人头 / 人天 / 工作量对标","excerpt":"运营无统一标准，按人头、人天和实际工作量对标；增值配置需有依据，专家确认。"},"adjustment":"工作量审减","reason":"月报和数据治理工作量重复，核减 10 万。"}],"techIssues":[{"id":"T-D-01","category":"绩效","severity":"高","finding":"无用户数、活跃度、内容产出量等绩效指标；最大用户 5,000 却写并发 2,000，前后矛盾。","evidence":"运营方案 P30","status":"待补正"},{"id":"T-D-02","category":"运营","severity":"高","finding":"12 人配置与工作量不匹配，缺岗位职责和工作量测算。","evidence":"人员配置 P2","status":"待修改"},{"id":"T-D-03","category":"依据","severity":"中","finding":"增值配置（数据看板）无单独报价和依据。","evidence":"运营方案 P36","status":"待补正"}],"versions":[{"id":"V1","label":"初稿","date":"2026-10-07","total":240,"note":"按 12 人配置初核。","comments":[]},{"id":"V2","label":"修改稿","date":"2026-10-18","total":210,"note":"按 9 人、历史活动价重算。","comments":["内容运营 12 人核减为 9 人，审减 14 万。","活动单价按历史合同下调，审减 10 万。","数据运营工作量核减 6 万。"]}],"id":"D","name":"某市数字政府运营服务（内容/活动/数据）","client":"广东省财政厅（地市）","category":"运营","method":"人天 + 专家判断","methodKey":"cost","submitted":260,"firstApproved":240,"approved":210,"stage":"专家意见","risk":"高","statusLabel":"专家意见","updated":"2026-10-18","owner":"某市政务服务数据管理局（合成）","reviewer":"中通服评审组","expert":"运营/绩效专家","summary":"运营无严格标准，按人头/人天与工作量对标，12 人核减为 9 人；审定 210 万。","conclusion":"审定 210 万；运营单价与人头仍需专家确认。","next":"专家确认人头，补绩效指标。","reduction":50,"rate":19.2},{"stageIndex":5,"riskKey":"low","statusTone":"green","materials":[{"name":"合同","pages":22,"type":"PDF","ocr":"已 OCR","note":"服务范围条款"},{"name":"测评方案","pages":18,"type":"PDF","ocr":"已解析","note":"2 个三级系统"},{"name":"培训方案","pages":10,"type":"Word","ocr":"已解析","note":"3 期 60 人"}],"functions":[],"costItems":[{"id":"E-01","name":"等保测评","spec":"三级系统 2 个","qty":2,"unit":"个","unitPrice":18,"submitted":36,"firstAmount":34,"approvedAmount":32,"priceSource":"市场价 16 万/个","basis":{"source":"合同（示例）","clause":"服务范围与报价一致性","excerpt":"合同范围外的服务不计；合同缺页、附件不全的，先补正再审定。"},"adjustment":"单价审减","reason":"报价 18 万/个，高于市场均价 12.5%，按 16 万/个审定。"},{"id":"E-02","name":"监理","spec":"项目全过程监理","qty":1,"unit":"项","unitPrice":30,"submitted":30,"firstAmount":29,"approvedAmount":28,"priceSource":"历史合同 + 市场价","basis":{"source":"合同（示例）","clause":"服务范围与报价一致性","excerpt":"合同范围外的服务不计；合同缺页、附件不全的，先补正再审定。"},"adjustment":"范围审减","reason":"合同外增加 2 次现场会，未在报价中单列，按合同范围审定。"},{"id":"E-03","name":"培训","spec":"3 期，60 人","qty":3,"unit":"期","unitPrice":10,"submitted":30,"firstAmount":29,"approvedAmount":28,"priceSource":"市场价 9.3 万/期","basis":{"source":"合同（示例）","clause":"服务范围与报价一致性","excerpt":"合同范围外的服务不计；合同缺页、附件不全的，先补正再审定。"},"adjustment":"人数审减","reason":"方案 60 人，报价按 80 人计，按 60 人审定。"}],"techIssues":[{"id":"T-E-01","category":"合同","severity":"中","finding":"合同服务范围表述不清，测评/监理/培训边界重叠。","evidence":"合同 P6","status":"待修改"},{"id":"T-E-02","category":"一致性","severity":"中","finding":"培训方案 60 人，报价按 80 人计。","evidence":"培训方案 P3 vs 报价书 P5","status":"已闭环"},{"id":"T-E-03","category":"必要性","severity":"中","finding":"未列密码应用测评；按等保要求属必要第三方服务，应补充或说明。","evidence":"等保要求 + 报价书","status":"待补正"}],"versions":[{"id":"V1","label":"初稿","date":"2026-10-08","total":92,"note":"按合同和市场价初核。","comments":[]},{"id":"V2","label":"定稿","date":"2026-10-17","total":88,"note":"培训人数、监理范围审减。","comments":["培训人数按 60 人审定，审减 2 万。","监理范围外服务不计，审减 2 万。"]}],"id":"E","name":"某局第三方测评与监理服务","client":"广东烟草","category":"第三方服务","method":"合同 + 市场价","methodKey":"cost","submitted":96,"firstApproved":92,"approved":88,"stage":"定稿","risk":"低","statusLabel":"定稿","updated":"2026-10-17","owner":"某局信息中心（合成）","reviewer":"中通服评审组","expert":"合同/测评专家","summary":"第三方测评/监理/培训按合同与市场价核对，审定 88 万。","conclusion":"审定 88 万；合同范围外服务不计。","next":"补合同范围说明，出审定表。","reduction":8,"rate":8.3},{"stageIndex":4,"riskKey":"mid","statusTone":"blue","materials":[{"name":"可研报告","pages":96,"type":"PDF","ocr":"已解析","note":"含功能清单和估算"},{"name":"投资估算书","pages":24,"type":"Excel","ocr":"已解析","note":"五点法明细"},{"name":"专家会纪要","pages":1,"type":"录音/转写","ocr":"已转写","note":"2026-10-18"}],"functions":[{"id":"F-ILF","name":"内部逻辑文件（ILF）","desc":"平台主数据、业务数据等 12 个数据组；送审 13 个，合并 1 个。","proposedType":"ILF","approvedType":"ILF","quantity":13,"approvedQty":12,"weight":10,"rawFP":130,"firstFP":130,"approvedFP":120,"submittedAmount":53.7,"firstAmount":48.6,"approvedAmount":43.4,"adjustment":"合并 1 个数据组","reason":"客户主数据与供应商主数据共享同一数据组，合并为 1 个 ILF。","basis":{"source":"南网可研评审细则（示例）","clause":"五点法权重与系数","excerpt":"ILF≈10、EIF≈7、EI≈4、EO≈5、EQ≈4；功能点×权重后乘需求不确定系数 1.39，再按人天单价折算。"},"caseRef":"CASE-2026-031 南网五点法分类复核","aiSuggestion":"合并 1 个 ILF","confidence":0.88,"decision":"已采纳"},{"id":"F-EIF","name":"外部接口文件（EIF）","desc":"只读引用外部系统数据组 8 个；送审 9 个，剔除 1 个重复接口。","proposedType":"EIF","approvedType":"EIF","quantity":9,"approvedQty":8,"weight":7,"rawFP":63,"firstFP":63,"approvedFP":56,"submittedAmount":26.0,"firstAmount":22.8,"approvedAmount":20.3,"adjustment":"删除 1 个重复接口","reason":"与已有接口重复，不单独计。","basis":{"source":"南网可研评审细则（示例）","clause":"五点法权重与系数","excerpt":"ILF≈10、EIF≈7、EI≈4、EO≈5、EQ≈4；功能点×权重后乘需求不确定系数 1.39，再按人天单价折算。"},"caseRef":"CASE-2026-031","aiSuggestion":"删除重复接口","confidence":0.84,"decision":"已采纳"},{"id":"F-EI","name":"外部输入（EI）","desc":"外部输入事务 22 个；送审 22 个，合并 2 个。","proposedType":"EI","approvedType":"EI","quantity":22,"approvedQty":20,"weight":4,"rawFP":88,"firstFP":88,"approvedFP":80,"submittedAmount":36.3,"firstAmount":32.5,"approvedAmount":29.0,"adjustment":"合并 2 个输入","reason":"同一业务对象的两个录入入口合并。","basis":{"source":"南网可研评审细则（示例）","clause":"五点法权重与系数","excerpt":"ILF≈10、EIF≈7、EI≈4、EO≈5、EQ≈4；功能点×权重后乘需求不确定系数 1.39，再按人天单价折算。"},"caseRef":"CASE-2026-031","aiSuggestion":"合并 2 个 EI","confidence":0.79,"decision":"待确认"},{"id":"F-EO","name":"外部输出（EO）","desc":"外部输出事务 15 个；送审 15 个，合并 1 个。","proposedType":"EO","approvedType":"EO","quantity":15,"approvedQty":14,"weight":5,"rawFP":75,"firstFP":75,"approvedFP":70,"submittedAmount":31.0,"firstAmount":28.4,"approvedAmount":25.3,"adjustment":"合并 1 个输出；1 个无计算改判 EQ","reason":"两个报表输出共用同一数据源和格式，合并；另有 1 个无公式计算、只是呈现，应改判为外部查询（EQ），按 EQ 审减。","basis":{"source":"南网可研评审细则（示例）","clause":"五点法权重与系数","excerpt":"ILF≈10、EIF≈7、EI≈4、EO≈5、EQ≈4；功能点×权重后乘需求不确定系数 1.39，再按人天单价折算。"},"caseRef":"CASE-2026-031","aiSuggestion":"合并 1 个 EO","confidence":0.81,"decision":"已采纳"},{"id":"F-EQ","name":"外部查询（EQ）","desc":"外部查询事务 20 个；送审 20 个，合并 2 个。","proposedType":"EQ","approvedType":"EQ","quantity":20,"approvedQty":18,"weight":4,"rawFP":80,"firstFP":80,"approvedFP":72,"submittedAmount":33.0,"firstAmount":29.7,"approvedAmount":26.0,"adjustment":"合并 2 个查询","reason":"同一查询条件的两个入口合并。","basis":{"source":"南网可研评审细则（示例）","clause":"五点法权重与系数","excerpt":"ILF≈10、EIF≈7、EI≈4、EO≈5、EQ≈4；功能点×权重后乘需求不确定系数 1.39，再按人天单价折算。"},"caseRef":"CASE-2026-031","aiSuggestion":"合并 2 个 EQ","confidence":0.77,"decision":"已采纳"}],"costItems":[],"techIssues":[{"id":"T-F-01","category":"技术","severity":"高","finding":"可研深度不足，未达到初设程度，五点法分类缺依据。","evidence":"可研报告 P12","status":"待补正"},{"id":"T-F-02","category":"功能点","severity":"高","finding":"ILF/EIF 边界描述不清，部分数据组未说明维护主体。","evidence":"可研报告 P28","status":"待修改"},{"id":"T-F-03","category":"绩效","severity":"中","finding":"缺用户数、并发、吞吐量等绩效指标。","evidence":"可研报告 P64","status":"待补正"}],"versions":[{"id":"V1","label":"初稿","date":"2026-10-09","total":162,"note":"按五点法初核。","comments":[]},{"id":"V2","label":"专家会后","date":"2026-10-18","total":144,"note":"按专家意见合并重复接口/输入。","comments":["合并 1 个 EIF、2 个 EI、1 个 EO、2 个 EQ。","可研深度不足，补充后再提交专家会。"]}],"id":"F","name":"南方电网某数字化平台可研（五点法）","client":"南方电网","category":"软件开发","method":"南网五点法（ILF/EIF/EI/EO/EQ）","methodKey":"five","submitted":180,"firstApproved":162,"approved":144,"stage":"专家意见","risk":"中","statusLabel":"专家会","updated":"2026-10-18","owner":"南方电网某单位（合成）","reviewer":"中通服评审组","expert":"可研/造价专家","summary":"五点法识别 398 FP，×1.39=553.2 调整 FP，按 2600 元/人天折算 144 万；可研深度不足，专家会退回补充分类依据。","conclusion":"审定 144 万；可研补充后再提交专家会。","next":"补充功能点分类依据，再开专家会。","fpSummary":{"submittedFP":436,"firstFP":436,"approvedFP":398,"adjustedFP":553.2,"personDays":553.2,"unitPrice":2600,"coefficient":1.39,"items":5,"approvedItems":5,"overSplit":0,"reclass":0,"duplicate":2,"excluded":0,"unit":"南网五点法：权重 ILF 10 / EIF 7 / EI 4 / EO 5 / EQ 4；系数 1.39；2600 元/人天"},"reduction":36,"rate":20.0}],"categoryTotals":[{"name":"软件开发","submitted":738,"approved":337,"reduction":401},{"name":"基础设施 / 租用软件","submitted":420,"approved":356,"reduction":64},{"name":"运维","submitted":180,"approved":142,"reduction":38},{"name":"运营","submitted":260,"approved":210,"reduction":50},{"name":"第三方服务","submitted":96,"approved":88,"reduction":8}],"clientTotals":[{"name":"财政体系","projects":4,"submitted":1418,"approved":901},{"name":"南方电网","projects":1,"submitted":180,"approved":144},{"name":"广东烟草","projects":1,"submitted":96,"approved":88}],"topReductions":[{"id":"A","name":"省一体化政务服务平台（二期）软件开发","reduction":365,"rate":65.4},{"id":"B","name":"某市政务云基础设施扩容及软件租赁","reduction":64,"rate":15.2},{"id":"D","name":"某市数字政府运营服务（内容/活动/数据）","reduction":50,"rate":19.2},{"id":"C","name":"某厅局信息系统运维服务（2026—2027）","reduction":38,"rate":21.1},{"id":"F","name":"南方电网某数字化平台可研（五点法）","reduction":36,"rate":20.0},{"id":"E","name":"某局第三方测评与监理服务","reduction":8,"rate":8.3}],"commonIssues":[{"title":"功能点过度拆分","text":"A 项目用户管理/权限配置拆成 3 个 ILF，实际共享同一数据组；合并后 FP 降 45%。"},{"title":"EIF / ILF 分类误判","text":"A 项目事项管理按外部接口申报，实际在本系统内维护，应改判 ILF。"},{"title":"事务功能混入数据功能","text":"报表查询、统计大屏在财政两点法中不应计入 ILF；A 项目因此审减 30 万。"},{"title":"租赁软件价格与合同缺页","text":"B 项目租赁软件报价高于采购网 12%，合同缺 2 页，审减 11 万。"},{"title":"运维比例按保修期内计算","text":"C 项目应按保修期外 6.5%，申报按 8%，审减 18 万。"},{"title":"运营无绩效指标、人头不匹配","text":"D 项目 12 人配置与工作量不匹配，缺用户数/活跃度指标；最大用户 5,000 却写并发 2,000；核减为 9 人。"},{"title":"服务内容与架构模块不一致","text":"方案架构画 5 个模块，服务内容写了 8 个；前后不对应，多出部分审减。"},{"title":"手搓表格公式错误","text":"政数局部分项目无统一表格，从 Word 复制到 Excel 手搓套公式；标准 35 误作 15，需逐项纠错。"}],"actions":[{"time":"2026-10-18 17:00","project":"F","stage":"专家意见","action":"专家会：可研深度不足，退回补充功能点分类依据","actor":"专家库","result":"待修改"},{"time":"2026-10-18 15:30","project":"D","stage":"专家意见","action":"运营人头 12→9，补绩效指标","actor":"运营专家","result":"待确认"},{"time":"2026-10-17 16:00","project":"C","stage":"内部复核","action":"运维比例按保修期外 6.5% 重算","actor":"评审组","result":"已复核"},{"time":"2026-10-17 11:00","project":"B","stage":"内部复核","action":"租赁软件价格复核，合同缺页扣减","actor":"价格专家","result":"已复核"},{"time":"2026-10-16 17:00","project":"A","stage":"定稿","action":"V3 定稿，审定 193 万，锁定版本","actor":"评审组","result":"已定稿"},{"time":"2026-10-16 10:00","project":"A","stage":"定稿","action":"专家意见 5 条全部闭环","actor":"专家库","result":"已闭环"},{"time":"2026-10-15 14:00","project":"E","stage":"定稿","action":"培训人数按 60 人审定","actor":"评审组","result":"已定稿"},{"time":"2026-10-12 09:00","project":"—","stage":"知识库","action":"新增历史案例 6 条、价格记录 120 条","actor":"知识库管理员","result":"已入库"}],"knowledge":{"sources":[{"id":"std","name":"标准规范","count":12,"updated":"2026-10-12","desc":"国标/行标/业主细则/功能点定义"},{"id":"guide","name":"审核要点","count":1,"updated":"2026-10-12","desc":"2025 版现行；工作规定只用最新版"},{"id":"case","name":"历史案例","count":86,"updated":"2026-10-15","desc":"历史审定表、问题清单、专家批注"},{"id":"minutes","name":"会议纪要","count":24,"updated":"2026-10-18","desc":"专家会录音转写与摘要"},{"id":"price","name":"价格库","count":1240,"updated":"2026-10-19","desc":"政府采购网/合同/历史成交价"},{"id":"contract","name":"合同库","count":320,"updated":"2026-10-10","desc":"租赁/运维/第三方服务合同"},{"id":"template","name":"业主模板","count":18,"updated":"2026-09-30","desc":"财政/南网/烟草审定表模板"}],"qa":[{"q":"报表查询算不算 ILF？","a":"不算。ILF 必须是可独立维护的数据组；报表查询属于事务功能，财政两点法不计入。","citations":["标准规范（示例）· ILF 定义","历史案例 CASE-2026-011","2026-09-18 专家会纪要"]},{"q":"运维比例怎么取？","a":"先看保修期：保修期内和保修期外比例不同；本项目应按保修期外 6.5%，不是 8%。","citations":["运维评审细则（示例）第 4.3 条","历史案例 CASE-2025-052"]},{"q":"租赁软件价格高于采购网怎么办？","a":"以采购网/合同低价为审定依据；要求补齐合同页，超出部分审减。","citations":["政府采购网 2026-08 价格","B 项目合同第 3.2 条"]},{"q":"南网五点法的 1.39 怎么用？","a":"功能点×权重得到总 FP；×1.39（需求不确定）×通用性系数得到调整 FP；再按人天折算和 2600 元/人天计算投资。","citations":["南网可研评审细则（示例）","F 项目专家会纪要"]},{"q":"EO 和 EQ 怎么区分？","a":"EO 必须通过计算对外输出；只是查询、筛选、统计、直接呈现、没有公式计算的，是 EQ。申报写成 EO 的按 EQ 认定，审减。","citations":["标准规范（示例）· EO/EQ 定义","CASE-2026-031 南网五点法分类复核"]},{"q":"没有“修改/维护”字眼就不是 ILF 吗？","a":"不能只靠关键词。要回到标准定义（可独立维护的数据组）+ 历史相似案例判断；描述换一种说法就判错，正是关键词规则的坑。","citations":["标准规范（示例）· ILF 定义","CASE-2025-037"]}],"entries":[{"id":"K-01","type":"标准","title":"ILF / EIF 定义与边界（示例）","source":"标准规范库","date":"2026-10-12","tags":["功能点","两点法","ILF"]},{"id":"K-02","type":"案例","title":"某厅局用户管理模块审减 42%","source":"历史案例库","date":"2026-09-30","tags":["过度拆分","用户管理"]},{"id":"K-03","type":"纪要","title":"2026-09-18 专家会：报表查询不计 ILF","source":"会议纪要库","date":"2026-09-18","tags":["事务功能","报表"]},{"id":"K-04","type":"价格","title":"2026-08 政府采购网服务器均价 2.7 万/台","source":"价格库","date":"2026-08-31","tags":["服务器","采购价"]},{"id":"K-05","type":"合同","title":"某市软件租赁合同第 3.2 条：服务范围与附件","source":"合同库","date":"2026-09-22","tags":["租赁","合同"]},{"id":"K-06","type":"模板","title":"南网可研投资估算表（五点法）","source":"业主模板库","date":"2026-09-30","tags":["南网","五点法"]}]}};
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const num = (v) => Number(v).toLocaleString("zh-CN", { maximumFractionDigits: 1 });
+const money = (v) => `${num(v)} 万`;
+const pct = (v) => `${Number(v).toFixed(1)}%`;
+const cutText = (v) => Number(v) > 0 ? `-${money(v)}` : "0 万";
+const stageLine = (p) => p.statusLabel.indexOf(p.stage) === 0 ? p.statusLabel : `${p.stage} · ${p.statusLabel}`;
+const projectById = (id) => DATA.projects.find((p) => p.id === id);
+const stageState = (p, i) => i < p.stageIndex ? "done" : i === p.stageIndex ? "current" : "todo";
+const TYPE_TONE = { ILF: "violet", EIF: "blue", EI: "green", EO: "amber", EQ: "slate" };
+
+const state = {
+  decisions: {},
+  techStatus: {},
+  filters: { fpAdj: "all", fpType: "all", techProject: "all", techSeverity: "all" },
+  drawer: null,
+  tour: { active: false, step: 0 },
+  kbQ: 0,
+  version: {},
+  lastRoute: "",
+};
+
+function badge(label, tone) { return `<span class="badge tone-${esc(tone || "slate")}">${esc(label)}</span>`; }
+function riskBadge(p) { return badge(`风险 ${p.risk}`, p.riskKey === "high" ? "red" : p.riskKey === "mid" ? "amber" : "green"); }
+function statusBadge(p) { return badge(p.statusLabel, p.statusTone || "blue"); }
+function typeBadge(t) {
+  if (!t || t === "—") return `<span class="badge tone-slate">—</span>`;
+  if (String(t).indexOf("不计") === 0) return `<span class="badge tone-red">${esc(t)}</span>`;
+  return `<span class="badge tone-${TYPE_TONE[t] || "slate"}">${esc(t)}</span>`;
+}
+function severityBadge(s) { return badge(s, s === "高" ? "red" : s === "中" ? "amber" : "slate"); }
+function decisionBadge(d) {
+  const tone = d === "已采纳" ? "green" : d === "已驳回" ? "red" : "amber";
+  return `<span class="badge decision-${tone === "green" ? "ok" : tone === "amber" ? "wait" : "no"}">${esc(d || "待确认")}</span>`;
+}
+function effectiveDecision(p, f) { return state.decisions[`${p.id}:${f.id}`] || f.decision; }
+function effectiveTechStatus(t) { return state.techStatus[t.id] || t.status; }
+function demoChanged() { return Object.keys(state.decisions).length > 0 || Object.keys(state.techStatus).length > 0; }
+
+function railHtml(p) {
+  return `<div class="rail" aria-label="评审进度">${DATA.stages.map((s, i) => {
+    const st = stageState(p, i);
+    return `<div class="rail-step ${st}"><span class="rail-dot"></span><span class="rail-label" title="${esc(s)}">${esc(s)}</span></div>`;
+  }).join("")}</div>`;
+}
+function stageTimeline(p) {
+  return `<div class="stage-timeline">${DATA.stages.map((s, i) => {
+    const st = stageState(p, i);
+    const color = st === "done" ? "var(--green)" : st === "current" ? "var(--blue)" : "var(--muted-2)";
+    return `<div class="stage-card" style="border-top-color:${color}">
+      <div class="stage-no">0${i + 1}</div>
+      <div class="stage-name">${esc(s)}</div>
+      <div class="stage-date">${st === "done" ? "已完成" : st === "current" ? "当前阶段" : "待开始"}</div>
+      <div class="stage-status" style="color:${color}">${p.stage === s ? esc(p.statusLabel) : ""}</div>
+    </div>`;
+  }).join("")}</div>`;
+}
+function pageHead(title, sub, actions) {
+  return `<div class="page-head"><div><h1>${esc(title)}</h1><p class="sub">${esc(sub)}</p></div><div class="page-actions">${actions || ""}</div></div>`;
+}
+function sectionHead(title, hint, extra) {
+  return `<div class="section-head"><div><h2>${esc(title)}</h2>${hint ? `<span class="hint">${esc(hint)}</span>` : ""}</div>${extra || ""}</div>`;
+}
+function kpi(label, value, small, tone, go) {
+  return `<div class="kpi ${tone ? "tone-" + tone : ""}" ${go ? `data-go="${go}" role="button" tabindex="0"` : ""}>
+    <span>${esc(label)}</span><strong>${esc(value)}</strong><small>${esc(small)}</small>
+  </div>`;
+}
+function barRow(label, approved, submitted) {
+  const ratio = submitted ? Math.max(2, approved / submitted * 100) : 0;
+  return `<div class="bar-row"><div class="bar-label">${esc(label)}</div><div class="bar-track"><div class="bar-fill" style="width:${ratio}%"></div></div><div class="bar-text">${num(approved)} / ${num(submitted)} 万</div></div>`;
+}
+
+function projectCard(p) {
+  const accent = p.riskKey === "high" ? "accent-high" : p.riskKey === "mid" ? "accent-mid" : "";
+  return `<article class="project-card ${accent}" data-go="project/${p.id}/overview" tabindex="0" role="button" aria-label="打开项目 ${esc(p.name)}">
+    <div class="card-top"><div><span class="project-code">${esc(p.client)} · ${esc(p.category)}</span><h3>${esc(p.name)}</h3><p class="applicant">${esc(p.owner)}</p><div class="method-line">${esc(p.method)}</div></div>${statusBadge(p)}</div>
+    <div class="card-meta">
+      <div><span>送审</span><strong>${money(p.submitted)}</strong></div>
+      <div><span>审定</span><strong>${money(p.approved)}</strong></div>
+      <div><span>审减</span><strong class="reduction">${money(p.reduction)}</strong></div>
+      <div><span>审减率</span><strong class="rate-value">${pct(p.rate)}</strong></div>
+    </div>
+    ${railHtml(p)}
+    <div class="card-foot"><span>${esc(p.next)}</span><span>打开卷宗 ›</span></div>
+  </article>`;
+}
+
+/* ------------------------------------------------------------------ overview */
+function renderOverview() {
+  const s = DATA.stats;
+  const high = DATA.projects.filter((p) => p.riskKey === "high");
+  const pending = DATA.projects.filter((p) => p.stageIndex < 5);
+  const top = DATA.topReductions.slice(0, 5);
+  const actions = DATA.actions.slice(0, 6);
+  return `${pageHead("财政评审批次总览", `${DATA.meta.batch} · 数据截至 ${DATA.meta.date}`, `
+      <button class="btn btn-primary" data-action="start-tour">▶ 开始 5 分钟导览</button>
+      <button class="btn btn-ghost" data-go="audit/A">查看审定表</button>`)}
+    <div class="info-banner"><b>本批结论：</b>6 个项目，送审 ${money(s.submitted)}，审定 ${money(s.approved)}，审减 <b>${money(s.reduction)}（${pct(s.rate)}）</b>。A 项目功能点审核 558 → 269 → 193 万，是本次演示主线；F 项目展示南网五点法。</div>
+    <div class="kpi-grid" id="kpiGrid">
+      ${kpi("本批项目", s.projects, "财政 / 南网 / 烟草", "", "projects")}
+      ${kpi("送审金额", `${num(s.submitted)} 万`, "6 个项目合计", "", "projects")}
+      ${kpi("审定金额", `${num(s.approved)} 万`, `审减 ${num(s.reduction)} 万`, "green", "audit/A")}
+      ${kpi("审减率", pct(s.rate), "按送审额计算", "amber", "audit/A")}
+      ${kpi("高风险项目", s.highRisk, "A 功能点 / D 运营", "warn", "tech")}
+      ${kpi("知识库命中", `${s.kbHit}%`, "依据覆盖率 96%", "green", "kb")}
+    </div>
+    ${sectionHead("项目卷宗", "6 个项目 · 点击打开卷宗")}
+    <div class="project-grid">${DATA.projects.map(projectCard).join("")}</div>
+    <div class="grid-3">
+      <section class="panel">
+        <div class="panel-head"><h2>类别分布</h2><span class="hint">审定 / 送审</span></div>
+        ${DATA.categoryTotals.map((c) => barRow(c.name, c.approved, c.submitted)).join("")}
+        <p class="mini-chart-note">软件类送审 738 万、审定 337 万，是本批审减的主要来源。</p>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>业主分布</h2><span class="hint">财政 / 南网 / 烟草</span></div>
+        ${DATA.clientTotals.map((c) => barRow(`${c.name}（${c.projects}）`, c.approved, c.submitted)).join("")}
+        <p class="mini-chart-note">财政体系 4 个项目；南网、烟草各 1 个，用于展示五点法和第三方服务口径。</p>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>审减 TOP 5</h2><span class="hint">按审减金额</span></div>
+        <div class="priority">${top.map((p) => `<div class="priority-row" data-go="project/${p.id}/overview"><div class="priority-main"><div class="priority-title">项目 ${p.id} · ${esc(p.name)}</div><div class="priority-sub">审减 ${money(p.reduction)} · ${pct(p.rate)}</div></div><span class="priority-date">${money(p.reduction)}</span></div>`).join("")}</div>
+      </section>
+    </div>
+    <div class="grid-2">
+      <section class="panel">
+        <div class="panel-head"><h2>共性问题</h2><span class="hint">本批 6 条</span></div>
+        <div class="common-list">${DATA.commonIssues.map((c, i) => `<div class="common-item"><span class="common-no">${i + 1}</span><div><strong>${esc(c.title)}</strong><p>${esc(c.text)}</p></div></div>`).join("")}</div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>高风险与待复核</h2><span class="hint">按风险 / 阶段</span></div>
+        <div class="priority">${[...high, ...pending.filter((p) => !high.includes(p))].slice(0, 6).map((p) => `<div class="priority-row" data-go="project/${p.id}/overview"><div class="priority-main"><div class="priority-title">项目 ${p.id} · ${esc(p.name)}</div><div class="priority-sub">${esc(p.category)} · ${esc(p.statusLabel)} · ${riskBadge(p)}</div></div><span class="priority-date">${pct(p.rate)}</span></div>`).join("")}</div>
+        <p class="mini-chart-note">高风险：A 功能点过度拆分、D 运营人头与绩效；待复核：B/C 内部复核、F 专家会。</p>
+      </section>
+    </div>
+    <section class="panel">
+      <div class="panel-head"><h2>最近动作</h2><span class="hint">按时间倒序</span></div>
+      <div class="table-wrap"><table><thead><tr><th>时间</th><th>项目</th><th>环节</th><th>动作</th><th>执行角色</th><th>结果</th></tr></thead><tbody>
+        ${actions.map((a) => `<tr><td class="cell-nowrap">${esc(a.time)}</td><td class="cell-project">${esc(a.project)}</td><td class="cell-nowrap">${esc(a.stage)}</td><td>${esc(a.action)}</td><td>${esc(a.actor)}</td><td>${esc(a.result)}</td></tr>`).join("")}
+      </tbody></table></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>审核方法</h2><span class="hint">四条线，四种口径</span></div>
+      <div class="method-strip">
+        <span class="method-chip"><b>财政两点法</b> ILF 35 / EIF 15 → 人月</span>
+        <span class="method-chip"><b>南网五点法</b> ILF/EIF/EI/EO/EQ → ×1.39 → 2600 元/人天</span>
+        <span class="method-chip"><b>采购价 + 合同</b> 基础设施 / 租用软件</span>
+        <span class="method-chip"><b>运维比例</b> 保修期内 8% / 外 6.5%</span>
+        <span class="method-chip"><b>运营人天</b> 人头 + 工作量 + 专家判断</span>
+      </div>
+      <p class="mini-chart-note">知识库：标准规范 12 份、历史案例 86 个、会议纪要 24 份、价格库 1,240 条；AI 建议必须带引用，人确认后才进入审定表。</p>
+    </section>`;
+}
+
+/* ------------------------------------------------------------------ projects */
+function renderProjects() {
+  return `${pageHead("项目卷宗", "6 个项目，送审 1,694 万，审定 1,133 万；点击卡片打开卷宗。", `<button class="btn btn-ghost" data-action="start-tour">▶ 演示导览</button>`)}
+    <div class="project-grid">${DATA.projects.map(projectCard).join("")}</div>
+    <section class="panel">
+      <div class="panel-head"><h2>项目对比</h2><span class="hint">按审减金额排序</span></div>
+      <div class="table-wrap"><table><thead><tr><th>项目</th><th>业主</th><th>类别</th><th>方法</th><th>送审</th><th>审定</th><th>审减</th><th>风险</th><th>阶段</th></tr></thead><tbody>
+        ${DATA.projects.slice().sort((a, b) => b.reduction - a.reduction).map((p) => `<tr class="row-open" data-go="project/${p.id}/overview"><td class="cell-project">${p.id} · ${esc(p.name)}</td><td>${esc(p.client)}</td><td>${esc(p.category)}</td><td>${esc(p.method)}</td><td class="num">${money(p.submitted)}</td><td class="num">${money(p.approved)}</td><td class="num reduction">${money(p.reduction)} / ${pct(p.rate)}</td><td>${riskBadge(p)}</td><td class="cell-nowrap">${statusBadge(p)}</td></tr>`).join("")}
+      </tbody></table></div>
+    </section>`;
+}
+
+/* ------------------------------------------------------------------ project */
+function projectTabs(p) {
+  return [
+    ["overview", "概览"],
+    ["materials", "材料"],
+    ["detail", p.functions.length ? "功能点" : "费用明细"],
+    ["tech", "技术评审"],
+    ["versions", "版本"],
+    ["audit", "审定表"],
+  ];
+}
+function renderProject(id, tab) {
+  const p = projectById(id);
+  if (!p) return `<div class="empty">未找到该项目。</div>`;
+  const tabs = projectTabs(p);
+  const currentTab = tabs.some(([k]) => k === tab) ? tab : "overview";
+  let body = "";
+  if (currentTab === "materials") body = renderMaterials(p);
+  else if (currentTab === "detail") body = p.functions.length ? fpPanel(p) : costPanel(p);
+  else if (currentTab === "tech") body = techPanel(p);
+  else if (currentTab === "versions") body = versionsPanel(p);
+  else if (currentTab === "audit") body = `<div class="section-head" style="margin-top:0"><h2>审定表</h2><span class="hint">定稿版 · 只出表，不提整改建议</span></div>${auditTable(p)}`;
+  else body = projectOverview(p);
+  return `
+  <div class="detail-top">
+    <button class="back-link" data-go="projects">← 返回项目卷宗</button>
+    <div class="project-switch">${DATA.projects.map((x) => `<button class="filter-chip ${x.id === p.id ? "active" : ""}" data-go="project/${x.id}/${currentTab}">项目 ${x.id}</button>`).join("")}</div>
+  </div>
+  <div id="projectHeader">
+    <div class="detail-head">
+      <div><span class="project-code">${esc(p.client)} · ${esc(p.category)} · ${esc(p.method)}</span><h1>${esc(p.name)}</h1><p class="detail-sub">${esc(p.owner)} · 评审组：${esc(p.reviewer)} · 专家：${esc(p.expert)}</p></div>
+      <div class="detail-badges">${statusBadge(p)} ${riskBadge(p)}</div>
+    </div>
+    <div class="detail-meta">
+      <div><span>送审</span><strong>${money(p.submitted)}</strong></div>
+      <div><span>初稿 / 定稿</span><strong>${money(p.firstApproved)} / ${money(p.approved)}</strong></div>
+      <div><span>审减</span><strong class="reduction">${money(p.reduction)}（${pct(p.rate)}）</strong></div>
+      <div><span>当前阶段</span><strong>${esc(stageLine(p))}</strong></div>
+      <div><span>业主</span><strong>${esc(p.client)}</strong></div>
+      <div><span>项目单位</span><strong>${esc(p.owner)}</strong></div>
+      <div><span>版本</span><strong>${p.versions.length} 版 · 当前 ${p.versions[p.versions.length - 1].id}</strong></div>
+      <div><span>更新日期</span><strong>${esc(p.updated)}</strong></div>
+    </div>
+    ${stageTimeline(p)}
+  </div>
+  <div class="tabs">${tabs.map(([k, l]) => `<button class="tab ${currentTab === k ? "active" : ""}" data-go="project/${p.id}/${k}">${l}</button>`).join("")}</div>
+  ${body}`;
+}
+
+function projectOverview(p) {
+  const fns = p.functions.slice().sort((a, b) => (b.submittedAmount - b.approvedAmount) - (a.submittedAmount - a.approvedAmount)).slice(0, 4);
+  const items = p.costItems.slice().sort((a, b) => (b.submitted - b.approvedAmount) - (a.submitted - a.approvedAmount)).slice(0, 4);
+  const keyRows = p.functions.length ? fns : items;
+  const highTech = p.techIssues.filter((t) => t.severity === "高");
+  const decisions = p.functions.map((f) => effectiveDecision(p, f));
+  const accepted = decisions.filter((d) => d === "已采纳").length;
+  const waiting = decisions.filter((d) => d === "待确认").length;
+  const rejected = decisions.filter((d) => d === "已驳回").length;
+  return `<div class="grid-2">
+    <section class="panel">
+      <div class="panel-head"><h2>项目判断</h2><span class="hint">${esc(p.id)} · ${esc(p.category)}</span></div>
+      <p style="color:var(--ink-2);font-size:11.8px;line-height:1.7;">${esc(p.summary)}</p>
+      <div style="border-left:2px solid var(--blue);padding-left:10px;margin-top:12px;"><span class="small muted">审定结论</span><p style="font-size:11.6px;line-height:1.65;margin:2px 0 0;">${esc(p.conclusion)}</p></div>
+      <div style="border-left:2px solid var(--amber);padding-left:10px;margin-top:10px;"><span class="small muted">下一步</span><p style="font-size:11.6px;line-height:1.65;margin:2px 0 0;">${esc(p.next)}</p></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>关键调整</h2><span class="hint">点击看依据</span></div>
+      <div class="issue-list">${keyRows.map((r) => {
+        const isFp = !!r.proposedType;
+        const cut = isFp ? (r.submittedAmount - r.approvedAmount) : (r.submitted - r.approvedAmount);
+        return `<div class="issue-card" ${isFp ? `data-open-fp="${p.id}|${r.id}"` : `data-open-cost="${p.id}|${r.id}"`} role="button" tabindex="0">
+          <div class="issue-card-top"><div><h4>${esc(r.name)}</h4><div class="issue-meta">${isFp ? typeBadge(r.proposedType) + typeBadge(r.approvedType) : riskBadge(p)}<span class="mini-pill">${esc(r.adjustment)}</span></div></div><span class="small reduction">${cutText(cut)}</span></div>
+          <div class="issue-text">${esc(r.reason)}</div>
+        </div>`;
+      }).join("")}</div>
+    </section>
+  </div>
+  <div class="grid-2" style="margin-top:12px;">
+    <section class="panel">
+      <div class="panel-head"><h2>AI 建议 / 人工确认</h2><span class="hint">${p.functions.length ? "功能点审核" : "费用审核"}</span></div>
+      ${p.functions.length ? `<div class="grid-2" style="gap:8px;">
+        <div class="drawer-amount"><span>已采纳</span><strong style="color:var(--green)">${accepted}</strong></div>
+        <div class="drawer-amount"><span>待确认</span><strong style="color:var(--amber)">${waiting}</strong></div>
+        <div class="drawer-amount"><span>已驳回</span><strong style="color:var(--red)">${rejected}</strong></div>
+        <div class="drawer-amount"><span>功能项</span><strong>${p.functions.length} / ${p.fpSummary.items}</strong></div>
+      </div><p class="mini-chart-note">泛泛地问大模型，5 个答案可能有 3 个说“不是”；建议必须带标准条款 + 历史案例。采纳/驳回由评审人操作，驳回后转人工复核，不自动改金额。</p>` : `<p class="mini-chart-note">费用审核以采购价、合同、历史价为依据；AI 只做价格比对和条款抽取，不替评审人下结论。</p>`}
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>技术评审</h2><span class="hint">高风险 ${highTech.length} 项</span></div>
+      <div class="issue-list">${p.techIssues.slice(0, 3).map((t) => `<div class="issue-card" data-open-tech="${p.id}|${t.id}" role="button" tabindex="0"><div class="issue-card-top"><div><h4>${esc(t.finding)}</h4><div class="issue-meta">${severityBadge(t.severity)}<span class="mini-pill">${esc(t.category)}</span>${badge(effectiveTechStatus(t), effectiveTechStatus(t) === "已闭环" ? "green" : "amber")}</div></div><span class="small muted">›</span></div></div>`).join("")}</div>
+    </section>
+  </div>
+  <section class="panel" style="margin-top:12px;">
+    <div class="panel-head"><h2>材料与依据</h2><span class="hint">${p.materials.length} 份</span></div>
+    <div class="source-links">${p.materials.map((m) => `<span class="source-link">${esc(m.name)} · ${m.pages}${m.type === "Excel" ? " 项" : " 页"} · ${esc(m.ocr)}</span>`).join("")}</div>
+  </section>`;
+}
+
+function renderMaterials(p) {
+  return `<section class="panel">
+    <div class="panel-head"><h2>材料清单</h2><span class="hint">${p.materials.length} 份 · 已解析 / OCR / 转写</span></div>
+    <div class="table-wrap"><table><thead><tr><th>序号</th><th>材料</th><th>类型</th><th>页数 / 项数</th><th>解析状态</th><th>说明</th></tr></thead><tbody>
+      ${p.materials.map((m, i) => `<tr><td class="cell-nowrap">${i + 1}</td><td><strong>${esc(m.name)}</strong></td><td class="cell-nowrap">${esc(m.type)}</td><td class="cell-nowrap">${m.pages}</td><td class="cell-nowrap">${badge(m.ocr, "green")}</td><td>${esc(m.note)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="table-note">材料解析是知识库的入口：Excel 抽功能点/费用项，PDF 走 OCR，会议录音走转写。</p>
+  </section>`;
+}
+
+/* ------------------------------------------------------------------ function points */
+function twoPointRows(p, includeOther = true) {
+  const rows = p.functions.slice();
+  if (includeOther) {
+    const sum = (key) => rows.reduce((n, r) => n + (r[key] || 0), 0);
+    rows.push({
+      id: `${p.id}-OTHER`, name: `其他 ${p.fpSummary.items - p.functions.length} 项（合并后）`,
+      proposedType: "—", approvedType: "—", rawFP: p.fpSummary.submittedFP - sum("rawFP"),
+      firstFP: p.fpSummary.firstFP - sum("firstFP"), approvedFP: p.fpSummary.approvedFP - sum("approvedFP"),
+      submittedAmount: p.submitted - sum("submittedAmount"), firstAmount: p.firstApproved - sum("firstAmount"),
+      approvedAmount: p.approved - sum("approvedAmount"), adjustment: "汇总项",
+      reason: "其余功能项合并/删除后的汇总，明细见项目卷宗。",
+      basis: { source: "汇总", clause: "—", excerpt: "—" }, caseRef: "—",
+      aiSuggestion: "—", confidence: null, decision: "—",
+    });
+  }
+  return rows;
+}
+function fpFilteredRows(p) {
+  let rows = p.functions.slice();
+  if (p.methodKey === "two") rows = rows.concat(twoPointRows(p).filter((r) => r.id.endsWith("-OTHER")));
+  if (state.filters.fpAdj !== "all") rows = rows.filter((r) => r.adjustment === state.filters.fpAdj);
+  if (state.filters.fpType !== "all") rows = rows.filter((r) => r.proposedType === state.filters.fpType || r.approvedType === state.filters.fpType);
+  return rows;
+}
+function fpSummaryCards(p) {
+  return `<div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:0;">
+    ${kpi("送审", money(p.submitted), `${p.fpSummary.submittedFP} FP`, "", "")}
+    ${kpi("定稿", money(p.approved), `${p.fpSummary.approvedFP} FP`, "green", "")}
+    ${kpi("审减", money(p.reduction), pct(p.rate), "warn", "")}
+    ${kpi("功能项", `${p.fpSummary.items} → ${p.fpSummary.approvedItems}`, `过度拆分 ${p.fpSummary.overSplit} · 改判 ${p.fpSummary.reclass}`, "amber", "")}
+  </div>`;
+}
+function fpPanel(p) {
+  const isFive = p.methodKey === "five";
+  const adjOptions = ["all", ...Array.from(new Set(p.functions.map((f) => f.adjustment)))];
+  const types = isFive ? ["ILF", "EIF", "EI", "EO", "EQ"] : ["ILF", "EIF"];
+  if (!adjOptions.includes(state.filters.fpAdj)) state.filters.fpAdj = "all";
+  if (!["all", ...types].includes(state.filters.fpType)) state.filters.fpType = "all";
+  const rows = p.functions.length ? fpFilteredRows(p) : [];
+  const sums = rows.reduce((acc, r) => {
+    acc.raw += r.rawFP || 0; acc.first += r.firstFP || 0; acc.approved += r.approvedFP || 0;
+    acc.submitted += r.submittedAmount || 0; acc.firstAmt += r.firstAmount || 0; acc.approvedAmt += r.approvedAmount || 0;
+    return acc;
+  }, { raw: 0, first: 0, approved: 0, submitted: 0, firstAmt: 0, approvedAmt: 0 });
+  return `<div id="fpSummary">${fpSummaryCards(p)}</div>
+    <section class="panel">
+      <div class="panel-head"><h2>${isFive ? "南网五点法" : "财政两点法"} · 功能点审核</h2><span class="hint">${esc(p.fpSummary.unit)}</span></div>
+      <div class="filters">
+        <select class="select" data-select="fpAdj" aria-label="调整类型"><option value="all">全部调整类型</option>${adjOptions.filter((a) => a !== "all").map((a) => `<option value="${esc(a)}" ${state.filters.fpAdj === a ? "selected" : ""}>${esc(a)}</option>`).join("")}</select>
+        <button class="filter-chip ${state.filters.fpType === "all" ? "active" : ""}" data-filter="fpType" data-value="all">全部类型</button>
+        ${types.map((t) => `<button class="filter-chip ${state.filters.fpType === t ? "active" : ""}" data-filter="fpType" data-value="${t}">${t}</button>`).join("")}
+        <span class="small muted" style="margin-left:4px;">${rows.length} 行</span>
+      </div>
+      ${isFive ? fivePointTable(p, rows, sums) : twoPointTable(p, rows, sums)}
+      <p class="table-note">${isFive ? "五点法：功能点 × 权重 → 调整 FP（×1.39）→ 人天 → 2600 元/人天；参数为演示值，可按客户规则配置。" : "两点法：只计 ILF / EIF（可研权重 ILF 35 / EIF 15）；报表、统计、适配等事务功能不计。关键词判类不可靠，要回标准定义 + 历史案例。金额 = 功能点 × 综合单价（演示值）。"}</p>
+    </section>`;
+}
+function twoPointTable(p, rows, sums) {
+  return `<div class="table-wrap"><table class="table-compact" id="fpTable"><thead><tr><th>编号</th><th>功能项</th><th>送审类型</th><th>审定类型</th><th class="num">送审 FP</th><th class="num">审定 FP</th><th class="num">送审</th><th class="num">初稿</th><th class="num">定稿</th><th class="num">审减</th><th>调整原因</th><th>AI 建议 / 决策</th></tr></thead><tbody>
+    ${rows.map((r) => { const other = r.id.endsWith("-OTHER"); return `<tr class="${other ? "" : "row-open"}" ${other ? "" : `data-open-fp="${p.id}|${r.id}"`}>
+      <td class="cell-nowrap">${esc(r.id)}</td><td><strong>${esc(r.name)}</strong><div class="small muted">${esc(r.desc || "")}</div></td>
+      <td class="cell-nowrap">${typeBadge(r.proposedType)}</td><td class="cell-nowrap">${typeBadge(r.approvedType)}</td>
+      <td class="num">${num(r.rawFP)}</td><td class="num">${num(r.approvedFP)}</td>
+      <td class="num">${money(r.submittedAmount)}</td><td class="num">${money(r.firstAmount)}</td><td class="num amount-strong">${money(r.approvedAmount)}</td>
+      <td class="num reduction">${cutText((r.submittedAmount || 0) - (r.approvedAmount || 0))}</td>
+      <td>${esc(r.adjustment)}</td>
+      <td class="cell-nowrap">${r.aiSuggestion && r.aiSuggestion !== "—" ? `<span class="badge ai-badge">AI · ${esc(r.aiSuggestion)}</span>` : "—"} ${r.decision !== "—" ? decisionBadge(effectiveDecision(p, r)) : ""}</td>
+    </tr>`; }).join("")}
+    <tr class="table-total"><td colspan="4">筛选合计</td><td class="num">${num(sums.raw)}</td><td class="num">${num(sums.approved)}</td><td class="num">${money(sums.submitted)}</td><td class="num">${money(sums.firstAmt)}</td><td class="num">${money(sums.approvedAmt)}</td><td class="num reduction">${cutText(sums.submitted - sums.approvedAmt)}</td><td colspan="2">${state.filters.fpAdj === "all" && state.filters.fpType === "all" ? "与项目合计一致" : "当前筛选结果"}</td></tr>
+  </tbody></table></div>`;
+}
+function fivePointTable(p, rows, sums) {
+  return `<div class="table-wrap"><table class="table-compact" id="fpTable"><thead><tr><th>类型</th><th>送审数量</th><th>审定数量</th><th>权重</th><th class="num">送审 FP</th><th class="num">审定 FP</th><th class="num">送审</th><th class="num">初稿</th><th class="num">定稿</th><th>调整</th></tr></thead><tbody>
+    ${rows.map((r) => `<tr class="row-open" data-open-fp="${p.id}|${r.id}">
+      <td><strong>${esc(r.proposedType)}</strong><div class="small muted">${esc(r.name)}</div></td>
+      <td class="num">${r.quantity}</td><td class="num">${r.approvedQty}</td><td class="num">${r.weight}</td>
+      <td class="num">${num(r.rawFP)}</td><td class="num">${num(r.approvedFP)}</td>
+      <td class="num">${money(r.submittedAmount)}</td><td class="num">${money(r.firstAmount)}</td><td class="num amount-strong">${money(r.approvedAmount)}</td>
+      <td>${esc(r.adjustment)}</td>
+    </tr>`).join("")}
+    <tr class="table-total"><td colspan="4">合计</td><td class="num">${num(sums.raw)}</td><td class="num">${num(sums.approved)}</td><td class="num">${money(sums.submitted)}</td><td class="num">${money(sums.firstAmt)}</td><td class="num">${money(sums.approvedAmt)}</td><td>—</td></tr>
+  </tbody></table></div>
+  <div class="calc-row" style="margin-top:10px;">
+    <div class="calc-step"><span>审定功能点</span><strong>${p.fpSummary.approvedFP} FP</strong><em>五点法合计</em></div>
+    <div class="calc-step"><span>调整系数</span><strong>× ${p.fpSummary.coefficient}</strong><em>需求不确定系数</em></div>
+    <div class="calc-step"><span>调整后 FP</span><strong>${num(p.fpSummary.adjustedFP)}</strong><em>FP × 1.39</em></div>
+    <div class="calc-step"><span>通用性系数</span><strong>× 1.0</strong><em>通用 / 定制（演示）</em></div>
+    <div class="calc-step"><span>人天单价</span><strong>${num(p.fpSummary.unitPrice)} 元</strong><em>元/人天</em></div>
+    <div class="calc-step"><span>折算投资</span><strong>${money(Math.round(p.fpSummary.personDays * p.fpSummary.unitPrice / 10000 * 10) / 10)}</strong><em>人天 × 单价</em></div>
+  </div>`;
+}
+
+/* ------------------------------------------------------------------ cost */
+function costMetric(p) {
+  const map = {
+    B: ["采购价证据", "4 项", "合同缺页 1 项"],
+    C: ["运维基数", "1,500 万", "比例 8% → 6.5%"],
+    D: ["人员配置", "12 → 9 人", "人天单价 2,600 元"],
+    E: ["合同 / 市场价", "3 + 3 项", "培训 80 → 60 人"],
+  };
+  return map[p.id] || ["审核口径", "—", "—"];
+}
+function costPanel(p) {
+  const m = costMetric(p);
+  return `<div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:0;">
+    ${kpi("送审", money(p.submitted), `${p.costItems.length} 项`, "", "")}
+    ${kpi("定稿", money(p.approved), pct(p.rate), "green", "")}
+    ${kpi("审减", money(p.reduction), "按依据审减", "warn", "")}
+    ${kpi(m[0], m[1], m[2], "amber", "")}
+  </div>
+  <section class="panel">
+    <div class="panel-head"><h2>费用审核</h2><span class="hint">${esc(p.method)}</span></div>
+    <div class="table-wrap"><table class="table-compact" id="costTable"><thead><tr><th>编号</th><th>费用项</th><th>规格 / 数量</th><th class="num">送审</th><th class="num">初稿</th><th class="num">定稿</th><th class="num">审减</th><th>价格来源</th><th>调整原因</th></tr></thead><tbody>
+      ${p.costItems.map((c) => `<tr class="row-open" data-open-cost="${p.id}|${c.id}"><td class="cell-nowrap">${esc(c.id)}</td><td><strong>${esc(c.name)}</strong><div class="small muted">${esc(c.spec)} · ${c.qty}${esc(c.unit)}</div></td><td>${esc(c.spec)}<div class="small muted">${c.qty} ${esc(c.unit)} × ${num(c.unitPrice)} 万</div></td><td class="num">${money(c.submitted)}</td><td class="num">${money(c.firstAmount)}</td><td class="num amount-strong">${money(c.approvedAmount)}</td><td class="num reduction">${cutText(c.submitted - c.approvedAmount)}</td><td>${esc(c.priceSource)}</td><td>${esc(c.adjustment)}<div class="small muted">${esc(c.reason)}</div></td></tr>`).join("")}
+      <tr class="table-total"><td colspan="3">合计</td><td class="num">${money(p.submitted)}</td><td class="num">${money(p.firstApproved)}</td><td class="num">${money(p.approved)}</td><td class="num reduction">${cutText(p.reduction)}</td><td colspan="2">${pct(p.rate)}</td></tr>
+    </tbody></table></div>
+    <p class="table-note">${esc(p.conclusion)}</p>
+  </section>`;
+}
+
+/* ------------------------------------------------------------------ tech */
+function allTechIssues() {
+  return DATA.projects.flatMap((p) => p.techIssues.map((t) => Object.assign({}, t, { projectId: p.id, projectName: p.name })));
+}
+function techPanel(p) {
+  const issues = p.techIssues;
+  return techTable(issues, p.id);
+}
+function techTable(issues, projectId) {
+  const high = issues.filter((t) => t.severity === "高").length;
+  const open = issues.filter((t) => effectiveTechStatus(t) !== "已闭环").length;
+  return `<div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:0;">
+    ${kpi("技术问题", issues.length, "形式 / 架构 / 一致性 / 绩效", "", "")}
+    ${kpi("高风险", high, "优先处理", "warn", "")}
+    ${kpi("待修改 / 待补正", open, "未闭环", "amber", "")}
+    ${kpi("已闭环", issues.length - open, "已复核", "green", "")}
+  </div>
+  <section class="panel">
+    <div class="panel-head"><h2>技术评审问题</h2><span class="hint">点击查看证据和状态</span></div>
+    <div class="table-wrap"><table class="table-compact" id="techTable"><thead><tr><th>编号</th><th>项目</th><th>类别</th><th>严重度</th><th>问题</th><th>证据</th><th>状态</th></tr></thead><tbody>
+      ${issues.map((t) => `<tr class="row-open" data-open-tech="${projectId || t.projectId}|${t.id}"><td class="cell-nowrap">${esc(t.id)}</td><td class="cell-project">${esc(projectId || t.projectId)}</td><td class="cell-nowrap">${esc(t.category)}</td><td>${severityBadge(t.severity)}</td><td>${esc(t.finding)}</td><td class="small muted">${esc(t.evidence)}</td><td>${badge(effectiveTechStatus(t), effectiveTechStatus(t) === "已闭环" ? "green" : "amber")}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="table-note">技术评审看形式与实质：立项函/公章/材料/模板，现状-问题-需求-预算自洽，六类架构，绩效指标是否合常识。</p>
+  </section>`;
+}
+function renderTech() {
+  let issues = allTechIssues();
+  if (state.filters.techProject !== "all") issues = issues.filter((t) => t.projectId === state.filters.techProject);
+  if (state.filters.techSeverity !== "all") issues = issues.filter((t) => t.severity === state.filters.techSeverity);
+  return `${pageHead("技术评审", "17 项问题，覆盖材料、架构、一致性、绩效、价格、合同；按项目和严重度筛选。", `<button class="btn btn-ghost" data-action="start-tour">▶ 演示导览</button>`)}
+    <div class="filters">
+      <button class="filter-chip ${state.filters.techProject === "all" ? "active" : ""}" data-filter="techProject" data-value="all">全部项目</button>
+      ${DATA.projects.map((p) => `<button class="filter-chip ${state.filters.techProject === p.id ? "active" : ""}" data-filter="techProject" data-value="${p.id}">项目 ${p.id}</button>`).join("")}
+      <span style="width:6px;"></span>
+      ${["all", "高", "中", "低"].map((s) => `<button class="filter-chip ${state.filters.techSeverity === s ? "active" : ""}" data-filter="techSeverity" data-value="${s}">${s === "all" ? "全部严重度" : s + "风险"}</button>`).join("")}
+    </div>
+    ${techTable(issues, null)}`;
+}
+
+/* ------------------------------------------------------------------ versions */
+function versionsPanel(p) {
+  const selected = state.version[p.id] || p.versions[p.versions.length - 1].id;
+  const v = p.versions.find((x) => x.id === selected) || p.versions[p.versions.length - 1];
+  return `<section class="panel" id="versionTimeline">
+    <div class="panel-head"><h2>多轮版本</h2><span class="hint">初稿 → 专家意见 → 修改稿 → 定稿</span></div>
+    <div class="version-track">${p.versions.map((x, i) => {
+      const prev = p.versions[i - 1];
+      const diff = prev ? x.total - prev.total : 0;
+      return `<div class="version-card ${x.id === selected ? "active" : ""}" data-version="${esc(x.id)}" data-project="${p.id}">
+        <div class="v-id">${esc(x.id)} · ${esc(x.date)}</div><div class="v-label">${esc(x.label)}</div>
+        <div class="version-total">${num(x.total)} 万</div>
+        <div class="version-diff">${prev ? (diff <= 0 ? `较上一版 ${num(diff)} 万` : `较上一版 +${num(diff)} 万`) : "首次形成"}</div>
+      </div>`;
+    }).join("")}</div>
+    <div class="grid-2" style="margin-top:12px;">
+      <div>
+        <div class="panel-head"><h2>${esc(v.id)} · ${esc(v.label)}</h2><span class="hint">${esc(v.date)}</span></div>
+        <p class="small" style="font-size:11.2px;line-height:1.65;color:var(--ink-2);">${esc(v.note)}</p>
+        ${v.comments && v.comments.length ? `<ul class="comment-list">${v.comments.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : `<p class="mini-chart-note">本版无新增专家意见。</p>`}
+      </div>
+      <div>
+        <div class="panel-head"><h2>版本差异</h2><span class="hint">定稿前的变化</span></div>
+        <div class="table-wrap"><table class="table-compact"><thead><tr><th>版本</th><th>日期</th><th class="num">总额</th><th class="num">变化</th><th>说明</th></tr></thead><tbody>
+          ${p.versions.map((x, i) => { const prev = p.versions[i - 1]; return `<tr><td class="cell-nowrap">${esc(x.id)}</td><td class="cell-nowrap">${esc(x.date)}</td><td class="num">${money(x.total)}</td><td class="num ${prev && x.total < prev.total ? "reduction" : ""}">${prev ? (x.total - prev.total <= 0 ? num(x.total - prev.total) : "+" + num(x.total - prev.total)) : "—"}</td><td>${esc(x.label)}</td></tr>`; }).join("")}
+        </tbody></table></div>
+        <p class="mini-chart-note">首稿工作量最大；一般修正两版，第二稿基于首稿修正、很少推翻。十条意见只响应一两条要打回，打回稿只看修改部分；大项目来回十次八次。</p>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ------------------------------------------------------------------ audit table */
+function auditRows(p) {
+  if (p.functions.length) return p.methodKey === "two" ? twoPointRows(p) : p.functions.slice();
+  return p.costItems.map((c) => ({
+    id: c.id, name: c.name, spec: c.spec, qty: c.qty, unit: c.unit,
+    submittedAmount: c.submitted, firstAmount: c.firstAmount, approvedAmount: c.approvedAmount,
+    adjustment: c.adjustment, basis: c.basis,
+  }));
+}
+function auditTable(p) {
+  const rows = auditRows(p);
+  const isFp = p.functions.length > 0;
+  const total = rows.reduce((a, r) => ({ s: a.s + (r.submittedAmount || 0), f: a.f + (r.firstAmount || 0), d: a.d + (r.approvedAmount || 0) }), { s: 0, f: 0, d: 0 });
+  return `<section class="panel">
+    <div class="panel-head"><h2>${isFp ? "功能点审定表" : "费用审定表"}</h2><span class="hint">${esc(p.id)} · ${esc(p.name)} · 定稿 ${p.versions[p.versions.length - 1].id}</span></div>
+    <div class="table-wrap"><table class="table-compact" id="auditTable"><thead><tr><th>序号</th><th>${isFp ? "功能项" : "费用项"}</th><th class="num">送审</th><th class="num">初稿</th><th class="num">定稿</th><th class="num">审减</th><th class="num">审减率</th><th>依据</th></tr></thead><tbody>
+      ${rows.map((r, i) => { const other = r.id.endsWith("-OTHER"); return `<tr class="${other ? "" : "row-open"}" ${other ? "" : (isFp ? `data-open-fp="${p.id}|${r.id}"` : `data-open-cost="${p.id}|${r.id}"`)}><td class="cell-nowrap">${i + 1}</td><td><strong>${esc(r.name)}</strong>${r.spec ? `<div class="small muted">${esc(r.spec)}</div>` : ""}</td><td class="num">${money(r.submittedAmount)}</td><td class="num">${money(r.firstAmount)}</td><td class="num amount-strong">${money(r.approvedAmount)}</td><td class="num reduction">${cutText((r.submittedAmount || 0) - (r.approvedAmount || 0))}</td><td class="num">${r.submittedAmount ? pct((r.submittedAmount - r.approvedAmount) / r.submittedAmount * 100) : "—"}</td><td class="small">${esc((r.basis && (r.basis.clause || r.basis.source)) || r.adjustment || "—")}</td></tr>`; }).join("")}
+      <tr class="table-total"><td colspan="2">合计</td><td class="num">${money(total.s)}</td><td class="num">${money(total.f)}</td><td class="num">${money(total.d)}</td><td class="num reduction">${cutText(total.s - total.d)}</td><td class="num">${pct((total.s - total.d) / total.s * 100)}</td><td>—</td></tr>
+    </tbody></table></div>
+    <p class="table-note">审定表只给结论和金额，不提整改建议；甲方按审定价招标。交付：结果件为审定报告（Word + Excel），过程件为初稿表与评审意见；财政评审另需内部流转报告（文字）。金额为合成示例。</p>
+  </section>`;
+}
+function renderAudit(projectId) {
+  const p = projectById(projectId) || DATA.projects[0];
+  return `${pageHead("审定表", "按项目出 Excel 审定表：送审 / 初稿 / 定稿 / 审减 / 依据；可打印。", `<button class="btn btn-ghost" data-action="print">打印当前审定表</button>`)}
+    <div class="filters">${DATA.projects.map((x) => `<button class="filter-chip ${x.id === p.id ? "active" : ""}" data-go="audit/${x.id}">项目 ${x.id}</button>`).join("")}</div>
+    <div class="info-banner"><b>${esc(p.name)}</b> · 送审 ${money(p.submitted)} → 定稿 ${money(p.approved)}，审减 <b>${money(p.reduction)}（${pct(p.rate)}）</b>。当前版本 ${p.versions[p.versions.length - 1].id}。</div>
+    ${auditTable(p)}`;
+}
+
+/* ------------------------------------------------------------------ knowledge base */
+function renderKB() {
+  const kb = DATA.knowledge;
+  const q = kb.qa[state.kbQ] || kb.qa[0];
+  return `${pageHead("知识库", "标准规范 / 历史案例 / 会议纪要 / 价格库 / 合同库 / 业主模板；每条回答必须带引用。", `<button class="btn btn-ghost" data-action="start-tour">▶ 演示导览</button>`)}
+    <div class="source-grid">${kb.sources.map((s) => `<div class="source-card" style="cursor:default;"><div class="source-head"><div><div class="source-name">${esc(s.name)}</div><div class="source-count">${num(s.count)}</div></div>${badge(s.updated, "slate")}</div><div class="source-desc">${esc(s.desc)}</div><div class="source-meta">最近更新 ${esc(s.updated)}</div></div>`).join("")}</div>
+    <div class="grid-2" style="margin-top:12px;">
+      <section class="panel" id="kbQA">
+        <div class="panel-head"><h2>问答：这条结论凭什么？</h2><span class="hint">点击问题看引用</span></div>
+        <div>${kb.qa.map((item, i) => `<div class="qa-item ${i === state.kbQ ? "active" : ""}" data-qa="${i}" role="button" tabindex="0"><div class="qa-q">Q：${esc(item.q)}</div>${i === state.kbQ ? `<div class="qa-a">${esc(item.a)}</div><div class="cite-wrap">${item.citations.map((c) => `<span class="cite">${esc(c)}</span>`).join("")}</div>` : ""}</div>`).join("")}</div>
+        <p class="table-note">评审是证明题：多数据源证明合理或不合理。标准文件先解决 80–90%，再用历史案例和会议录音补暗知识；审核要点只用最新版。回答必须带引用。</p>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>知识库怎么工作</h2><span class="hint">本地部署 · 数据不出域</span></div>
+        <div class="calc-row">
+          <div class="calc-step"><span>1. 入库</span><strong>标准 / 案例 / 纪要</strong><em>Excel/PDF/OCR/ASR</em></div>
+          <div class="calc-step"><span>2. 检索</span><strong>关键词 + 向量</strong><em>项目相似度</em></div>
+          <div class="calc-step"><span>3. 建议</span><strong>分类 / 依据</strong><em>必须带引用</em></div>
+          <div class="calc-step"><span>4. 确认</span><strong>人采纳 / 驳回</strong><em>反馈写回案例库</em></div>
+        </div>
+        <p class="mini-chart-note">部署：内网 / VPN / 自建 GPU 或可信云；开源模型本地化；前台 Web 工作台内部登录；不依赖公开 IMA 或外部 API。</p>
+        <div class="method-strip" style="margin-top:8px;"><span class="method-chip"><b>标准文件</b> 先解决 80–90%</span><span class="method-chip"><b>历史案例</b> 补经验</span><span class="method-chip"><b>会议纪要</b> 补暗知识</span></div>
+      </section>
+    </div>
+    <section class="panel">
+      <div class="panel-head"><h2>最近入库</h2><span class="hint">${kb.entries.length} 条示例</span></div>
+      <div class="table-wrap"><table><thead><tr><th>编号</th><th>类型</th><th>标题</th><th>来源</th><th>日期</th><th>标签</th></tr></thead><tbody>
+        ${kb.entries.map((e) => `<tr class="row-open" data-open-kb="${e.id}"><td class="cell-nowrap">${esc(e.id)}</td><td class="cell-nowrap">${badge(e.type, e.type === "标准" ? "violet" : e.type === "案例" ? "blue" : e.type === "纪要" ? "amber" : "slate")}</td><td>${esc(e.title)}</td><td>${esc(e.source)}</td><td class="cell-nowrap">${esc(e.date)}</td><td>${e.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</td></tr>`).join("")}
+      </tbody></table></div>
+    </section>`;
+}
+
+/* ------------------------------------------------------------------ architecture */
+function renderArch() {
+  const chain = ["接件", "形式审查", "功能点 / 费用审核", "内部复核", "专家意见", "定稿", "导出审定表"];
+  const layers = [
+    { label: "交互层", color: "var(--blue)", chips: ["批次总览", "项目卷宗", "功能点审核", "费用审核", "技术评审", "知识库", "审定表"] },
+    { label: "服务层", color: "var(--amber)", chips: ["功能点计算", "价格比对", "依据检索", "报告生成", "版本 diff", "权限 / 留痕"] },
+    { label: "领域层", color: "var(--green)", chips: ["项目", "功能点", "费用项", "调整明细", "依据", "版本", "审定表"] },
+    { label: "数据层", color: "var(--muted-2)", chips: ["报价书", "预算书", "合同", "采购价", "标准规范", "历史案例", "会议纪要"] },
+  ];
+  const model = [
+    ["项目", "名称 / 业主 / 类别 / 送审 / 审定 / 方法 / 阶段", "项目卡 + 报价书"],
+    ["功能点", "描述 / 送审类型 / 审定类型 / FP / 金额 / 调整原因", "功能清单 + 规则"],
+    ["费用项", "类别 / 规格 / 数量 / 单价 / 送审 / 审定 / 价格来源", "报价书 + 采购价/合同"],
+    ["调整明细", "对象 / 原值 / 新值 / 差额 / 原因 / 依据 / 责任人", "AI 建议 + 人确认"],
+    ["依据", "来源 / 条款 / 原文 / 项目 / 专家 / 时间 / 置信度", "知识库"],
+    ["版本", "V1/V2/V3 / 差异 / 专家意见 / 定稿标记", "多轮评审"],
+    ["审定表", "行 / 合计 / 签章 / 导出时间", "Excel / 报告"],
+  ];
+  return `${pageHead("工作台架构", "一条证据链：知识库 → 审核台 → 审定表；本地部署，数据不出域。", `<button class="btn btn-ghost" data-action="start-tour">▶ 演示导览</button>`)}
+    <div class="banner"><div class="kicker" style="margin-bottom:7px;">主链路</div><div class="chain">${chain.map((n, i) => `<span class="chain-node">${esc(n)}</span>${i < chain.length - 1 ? `<span class="chain-arrow">→</span>` : ""}`).join("")}</div></div>
+    <div class="layer-stack" id="archLayers">
+      ${layers.map((l, i) => `<div class="layer"><div class="layer-label" style="color:${l.color}">${esc(l.label)}</div><div class="layer-chips">${l.chips.map((c) => `<span class="layer-chip">${esc(c)}</span>`).join("")}</div></div>${i < layers.length - 1 ? `<div class="connector">↓</div>` : ""}`).join("")}
+    </div>
+    <div class="grid-2" style="margin-top:12px;">
+      <section class="panel">
+        <div class="panel-head"><h2>AI + 知识库流程</h2><span class="hint">建议 → 引用 → 人确认 → 反馈</span></div>
+        <div class="calc-row">
+          <div class="calc-step"><span>解析</span><strong>Excel / Word / PDF</strong><em>OCR / ASR</em></div>
+          <div class="calc-step"><span>检索</span><strong>关键词 + 向量</strong><em>标准 / 案例 / 纪要</em></div>
+          <div class="calc-step"><span>建议</span><strong>分类 / 合并 / 依据</strong><em>带引用</em></div>
+          <div class="calc-step"><span>确认</span><strong>人采纳 / 驳回</strong><em>写回案例库</em></div>
+        </div>
+        <p class="mini-chart-note">模型：本地开源 LLM + embedding + rerank；内网/VPN；GPU 或可信云；RBAC + 审计日志；不调用外部 API。</p>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>人机边界</h2><span class="hint">AI 做初稿，人做结论</span></div>
+        <div class="grid-2" style="gap:8px;">
+          <div class="issue-card" style="cursor:default;border-left:2px solid var(--blue);"><h4 style="color:var(--blue);">AI 可做</h4><ul style="margin:6px 0 0;padding-left:16px;color:var(--ink-2);font-size:10.8px;line-height:1.65;"><li>功能点分类、过度拆分候选</li><li>依据匹配、价格比对</li><li>报告/审定表初稿</li><li>版本差异、材料抽取</li></ul></div>
+          <div class="issue-card" style="cursor:default;border-left:2px solid var(--amber);"><h4 style="color:var(--amber);">必须由人</h4><ul style="margin:6px 0 0;padding-left:16px;color:var(--ink-2);font-size:10.8px;line-height:1.65;"><li>原件/合同核验</li><li>分类与口径裁定</li><li>专家意见、结论确认</li><li>签字盖章、归档担责</li></ul></div>
+        </div>
+        <p class="table-note">一句话：AI 做“可辩护的初稿”，人做“可担责的结论”。</p>
+      </section>
+    </div>
+    <section class="panel">
+      <div class="panel-head"><h2>数据模型</h2><span class="hint">实体、字段、来源</span></div>
+      <div class="table-wrap"><table><thead><tr><th>实体</th><th>关键字段</th><th>当前来源</th></tr></thead><tbody>
+        ${model.map((m) => `<tr><td class="cell-project">${esc(m[0])}</td><td>${esc(m[1])}</td><td class="muted">${esc(m[2])}</td></tr>`).join("")}
+      </tbody></table></div>
+    </section>
+    <div class="grid-2">
+      <section class="panel"><div class="panel-head"><h2>部署与安全</h2><span class="hint">政府项目</span></div><ul style="margin:0;padding-left:16px;color:var(--ink-2);font-size:11px;line-height:1.75;"><li>内网 / VPN / 自建 GPU 或可信云</li><li>开源模型本地化，数据不出域</li><li>前台 Web 工作台内部登录</li><li>RBAC、操作日志、版本留痕</li></ul></section>
+      <section class="panel"><div class="panel-head"><h2>下一步</h2><span class="hint">从演示到试点</span></div><ul style="margin:0;padding-left:16px;color:var(--ink-2);font-size:11px;line-height:1.75;"><li>P1 合成数据演示（当前）</li><li>P2 接 1–2 个真实模板，导入历史审定表</li><li>P3 接规则引擎、OCR、价格库、问题工单</li><li>指标：分类准确率、依据命中率、复核退回率</li></ul></section>
+    </div>`;
+}
+
+/* ------------------------------------------------------------------ tour page */
+const TOUR = [
+  { route: "overview", target: "#kpiGrid", title: "先看本批规模", text: "6 个项目、送审 1,694 万、审定 1,133 万、审减 561 万（33.1%）。先给结论，再进入功能点。" },
+  { route: "project/A/overview", target: "#projectHeader", title: "项目 A：558 → 269 → 193", text: "送审 558 万，初稿 269 万，专家意见后定稿 193 万。项目卷宗把送审、初稿、定稿、审减放在同一屏。" },
+  { route: "fp/A", target: "#fpTable", title: "功能点怎么重认定", text: "12 项典型调整：过度拆分合并、EIF/ILF 误判、报表/大屏不计、历史迁移一次性不计。点每行看依据。" },
+  { route: "project/A/versions", target: "#versionTimeline", title: "多轮版本", text: "V1 269 → V2 214 → V3 193；专家意见和每版差异都留痕，定稿锁定。" },
+  { route: "project/F/detail", target: "#fpSummary", title: "南网五点法", text: "ILF/EIF/EI/EO/EQ，398 FP ×1.39=553.2 调整 FP，按 2600 元/人天折算 144 万。" },
+  { route: "kb", target: "#kbQA", title: "知识库：依据从哪来", text: "标准、案例、会议纪要、价格库、合同库；每条回答带引用，没有引用就不出结论。" },
+  { route: "audit/A", target: "#auditTable", title: "最后交什么", text: "Excel 审定表：送审/初稿/定稿/审减/依据；只出表，不提整改建议，甲方按审定价招标。" },
+];
+function renderTourPage() {
+  return `${pageHead("演示导览", "7 步带客户走完：批次规模 → 项目 A → 功能点 → 版本 → 五点法 → 知识库 → 审定表。", `<button class="btn btn-primary" data-action="start-tour">▶ 开始导览</button>`)}
+    <section class="panel"><div class="panel-head"><h2>5 分钟导览路线</h2><span class="hint">可随时退出 · 支持 ← → 键</span></div>
+      <div class="issue-list">${TOUR.map((s, i) => `<div class="issue-card" style="cursor:default;"><div class="issue-card-top"><div><h4>${i + 1}. ${esc(s.title)}</h4><div class="issue-text">${esc(s.text)}</div></div><span class="badge tone-blue">${i + 1} / ${TOUR.length}</span></div></div>`).join("")}</div>
+      <p class="table-note">建议：先给结论，再打开项目 A 的功能点；客户追问依据时停在知识库；最后用审定表收尾。</p>
+    </section>`;
+}
+
+/* ------------------------------------------------------------------ drawer */
+function openDrawer(kind, id) {
+  state.drawer = { kind, id };
+  renderDrawer();
+  $("#drawerBackdrop").hidden = false;
+  $("#drawer").hidden = false;
+  $("#drawer").setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  setTimeout(() => { const b = $("#drawerClose"); if (b) b.focus(); }, 20);
+}
+function closeDrawer() {
+  state.drawer = null;
+  $("#drawerBackdrop").hidden = true;
+  $("#drawer").hidden = true;
+  $("#drawer").setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+function drawerEvidence(ev) {
+  if (!ev) return "";
+  return `<div class="drawer-section"><h3>依据</h3><div style="font-size:11.4px;line-height:1.65;color:var(--ink-2);"><b>${esc(ev.source || "")}</b>${ev.clause ? ` · ${esc(ev.clause)}` : ""}${ev.excerpt ? `<div class="small" style="margin-top:3px;">${esc(ev.excerpt)}</div>` : ""}</div></div>`;
+}
+function renderDrawer() {
+  const d = state.drawer;
+  if (!d) return;
+  let kicker = "详情", title = "", body = "";
+  if (d.kind === "fp") {
+    const [pid, fid] = d.id.split("|");
+    const p = projectById(pid); const f = p && p.functions.find((x) => x.id === fid);
+    if (!p || !f) return closeDrawer();
+    const decision = effectiveDecision(p, f);
+    const cut = (f.submittedAmount || 0) - (f.approvedAmount || 0);
+    kicker = `功能点 · ${f.id} · 项目 ${p.id}`; title = f.name;
+    body = `<div class="drawer-badges">${typeBadge(f.proposedType)}<span class="arrow" style="color:var(--muted-2)">→</span>${typeBadge(f.approvedType)}<span class="badge tone-slate">${esc(f.adjustment)}</span>${decisionBadge(decision)}</div>
+      <p class="drawer-lead">${esc(f.desc || f.reason)}</p>
+      <div class="drawer-amounts"><div class="drawer-amount"><span>送审</span><strong>${money(f.submittedAmount)}</strong></div><div class="drawer-amount"><span>初稿</span><strong>${money(f.firstAmount)}</strong></div><div class="drawer-amount"><span>定稿</span><strong>${money(f.approvedAmount)}</strong></div><div class="drawer-amount"><span>审减</span><strong class="reduction">${cutText(cut)}</strong></div></div>
+      <div class="drawer-section"><h3>调整原因</h3><div style="font-size:11.4px;line-height:1.65;color:var(--ink-2);">${esc(f.reason)}</div></div>
+      ${drawerEvidence(f.basis)}
+      <div class="drawer-section"><h3>历史案例</h3><div style="font-size:11.4px;line-height:1.65;color:var(--ink-2);">${esc(f.caseRef || "—")}</div></div>
+      <div class="drawer-section"><h3>AI 建议</h3><div style="font-size:11.4px;line-height:1.65;color:var(--ink-2);">${esc(f.aiSuggestion || "—")}${f.confidence != null ? ` · 置信度 ${Math.round(f.confidence * 100)}%` : ""}</div><div class="small muted" style="margin-top:3px;">AI 只给建议；采纳/驳回由评审人操作，驳回后转人工复核，不自动改金额。</div></div>
+      <div class="drawer-actions">${decision !== "已采纳" ? `<button class="btn btn-primary" data-action="accept-ai" data-project="${p.id}" data-fp="${f.id}">采纳建议</button>` : ""}${decision !== "已驳回" ? `<button class="btn" data-action="reject-ai" data-project="${p.id}" data-fp="${f.id}">驳回建议</button>` : ""}<button class="btn" data-action="close-drawer">关闭</button></div>
+      <p class="drawer-note">依据：标准条款 + 历史案例 + 专家意见；正式结论由评审人签字确认。</p>`;
+  } else if (d.kind === "cost") {
+    const [pid, cid] = d.id.split("|");
+    const p = projectById(pid); const c = p && p.costItems.find((x) => x.id === cid);
+    if (!p || !c) return closeDrawer();
+    kicker = `费用项 · ${c.id} · 项目 ${p.id}`; title = c.name;
+    body = `<div class="drawer-badges">${badge(c.adjustment, "amber")}${badge(p.category, "slate")}</div>
+      <p class="drawer-lead">${esc(c.spec)} · ${c.qty} ${esc(c.unit)} × ${num(c.unitPrice)} 万</p>
+      <div class="drawer-amounts"><div class="drawer-amount"><span>送审</span><strong>${money(c.submitted)}</strong></div><div class="drawer-amount"><span>初稿</span><strong>${money(c.firstAmount)}</strong></div><div class="drawer-amount"><span>定稿</span><strong>${money(c.approvedAmount)}</strong></div><div class="drawer-amount"><span>审减</span><strong class="reduction">${cutText(c.submitted - c.approvedAmount)}</strong></div></div>
+      <div class="drawer-section"><h3>价格来源</h3><div style="font-size:11.4px;line-height:1.65;color:var(--ink-2);">${esc(c.priceSource)}</div></div>
+      <div class="drawer-section"><h3>调整原因</h3><div style="font-size:11.4px;line-height:1.65;color:var(--ink-2);">${esc(c.reason)}</div></div>
+      ${drawerEvidence(c.basis)}
+      <div class="drawer-actions"><button class="btn" data-action="close-drawer">关闭</button></div>
+      <p class="drawer-note">费用审核以采购网/合同/历史价为依据；合同缺页、范围外服务先补正再审定。</p>`;
+  } else if (d.kind === "tech") {
+    const [pid, tid] = d.id.split("|");
+    const p = projectById(pid); const t = p && p.techIssues.find((x) => x.id === tid);
+    if (!p || !t) return closeDrawer();
+    const st = effectiveTechStatus(t);
+    kicker = `技术评审 · ${t.id} · 项目 ${p.id}`; title = t.category;
+    body = `<div class="drawer-badges">${severityBadge(t.severity)}${badge(st, st === "已闭环" ? "green" : "amber")}</div>
+      <p class="drawer-lead">${esc(t.finding)}</p>
+      <div class="drawer-section"><h3>证据位置</h3><div style="font-size:11.4px;line-height:1.65;color:var(--ink-2);">${esc(t.evidence)}</div></div>
+      <div class="drawer-section"><h3>处理建议</h3><div style="font-size:11.4px;line-height:1.65;color:var(--ink-2);">${t.severity === "高" ? "先补正/复核，再进入定稿；未闭环不得出审定表。" : "在定稿前完成修改或说明。"}</div></div>
+      <div class="drawer-actions">${st !== "已闭环" ? `<button class="btn btn-primary" data-action="close-tech" data-project="${p.id}" data-tech="${t.id}">标记已闭环（演示）</button>` : `<span class="badge tone-green">已闭环</span>`}<button class="btn" data-action="close-drawer">关闭</button></div>
+      <p class="drawer-note">技术评审是内部复核，不直接进入审定表；整改建议只对内部，不对甲方输出。</p>`;
+  } else if (d.kind === "kb") {
+    const e = DATA.knowledge.entries.find((x) => x.id === d.id);
+    if (!e) return closeDrawer();
+    kicker = `知识库 · ${e.type}`; title = e.title;
+    body = `<div class="drawer-badges">${badge(e.type, "violet")}${badge(e.date, "slate")}</div>
+      <p class="drawer-lead">来源：${esc(e.source)}</p>
+      <div class="drawer-section"><h3>标签</h3><div>${e.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div></div>
+      <div class="drawer-section"><h3>引用方式</h3><div style="font-size:11.4px;line-height:1.65;color:var(--ink-2);">回答必须带来源、条款/日期、适用项目；没有引用就不出结论。</div></div>
+      <div class="drawer-actions"><button class="btn" data-action="close-drawer">关闭</button></div>`;
+  }
+  $("#drawerKicker").textContent = kicker;
+  $("#drawerTitle").textContent = title;
+  $("#drawerBody").innerHTML = body;
+}
+
+/* ------------------------------------------------------------------ routes */
+let lastRoute = "";
+function parseRoute() {
+  const raw = location.hash.replace(/^#\/?/, "");
+  if (!raw) return { name: "overview" };
+  const parts = raw.split("/");
+  if (parts[0] === "project" && parts[1]) return { name: "project", id: parts[1].toUpperCase(), tab: parts[2] || "overview" };
+  if (["fp", "cost", "audit"].includes(parts[0])) return { name: parts[0], id: (parts[1] || (parts[0] === "fp" ? "A" : parts[0] === "cost" ? "B" : "A")).toUpperCase() };
+  return { name: parts[0] || "overview" };
+}
+function setCrumbs(route) {
+  let text = "批次总览";
+  if (route.name === "projects") text = "项目卷宗";
+  if (route.name === "fp") text = `功能点审核 / 项目 ${route.id}`;
+  if (route.name === "cost") text = `费用审核 / 项目 ${route.id}`;
+  if (route.name === "tech") text = "技术评审";
+  if (route.name === "kb") text = "知识库";
+  if (route.name === "audit") text = `审定表 / 项目 ${route.id}`;
+  if (route.name === "arch") text = "架构";
+  if (route.name === "tour") text = "演示导览";
+  if (route.name === "project") {
+    const p = projectById(route.id);
+    const tabs = { overview: "概览", materials: "材料", detail: p && p.functions.length ? "功能点" : "费用明细", tech: "技术评审", versions: "版本", audit: "审定表" };
+    text = `项目卷宗 / <b>${esc(p ? p.name : route.id)}</b> / ${tabs[route.tab] || "概览"}`;
+  }
+  $("#crumbs").innerHTML = text;
+}
+function setActiveNav(route) {
+  const active = route.name === "project" ? "projects" : route.name;
+  $$(".nav-item").forEach((el) => el.classList.toggle("active", el.dataset.nav === active));
+}
+function render() {
+  const route = parseRoute();
+  const routeKey = location.hash || "#/overview";
+  const changed = routeKey !== lastRoute;
+  lastRoute = routeKey;
+  if (changed && state.drawer) closeDrawer();
+  setActiveNav(route);
+  setCrumbs(route);
+  let html = "";
+  if (route.name === "projects") html = renderProjects();
+  else if (route.name === "fp") html = fpView(route.id);
+  else if (route.name === "cost") html = costView(route.id);
+  else if (route.name === "tech") html = renderTech();
+  else if (route.name === "kb") html = renderKB();
+  else if (route.name === "audit") html = renderAudit(route.id);
+  else if (route.name === "arch") html = renderArch();
+  else if (route.name === "tour") html = renderTourPage();
+  else if (route.name === "project") html = renderProject(route.id, route.tab);
+  else html = renderOverview();
+  $("#view").innerHTML = html;
+  $("#demoPill").hidden = !demoChanged();
+  applyTourHighlight();
+  if (changed && !state.tour.active) window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+function fpView(projectId) {
+  const p = projectById(projectId) || DATA.projects[0];
+  return `${pageHead("功能点审核", "按国家标准/行业规则重认定 ILF/EIF（或五点法）；每条调整带依据、案例、AI 建议和人工决策。", `<button class="btn btn-ghost" data-action="start-tour">▶ 演示导览</button>`)}
+    <div class="filters">${DATA.projects.filter((x) => x.functions.length).map((x) => `<button class="filter-chip ${x.id === p.id ? "active" : ""}" data-go="fp/${x.id}">项目 ${x.id}</button>`).join("")}<span class="small muted" style="margin-left:4px;">${esc(p.method)}</span></div>
+    ${fpPanel(p)}`;
+}
+function costView(projectId) {
+  const p = projectById(projectId) || DATA.projects.find((x) => x.costItems.length);
+  return `${pageHead("费用审核", "基础设施/租用、运维、运营、第三方服务；每条费用有价格来源和合同/标准依据。", `<button class="btn btn-ghost" data-action="start-tour">▶ 演示导览</button>`)}
+    <div class="filters">${DATA.projects.filter((x) => x.costItems.length).map((x) => `<button class="filter-chip ${x.id === p.id ? "active" : ""}" data-go="cost/${x.id}">项目 ${x.id}</button>`).join("")}<span class="small muted" style="margin-left:4px;">${esc(p.method)}</span></div>
+    ${costPanel(p)}`;
+}
+
+/* ------------------------------------------------------------------ search */
+function closeSearch() { const b = $("#searchResults"); if (b) { b.hidden = true; b.innerHTML = ""; } }
+function renderSearch(q) {
+  const box = $("#searchResults");
+  const query = q.trim().toLowerCase();
+  if (!query) { box.hidden = true; box.innerHTML = ""; return; }
+  const results = [];
+  DATA.projects.forEach((p) => {
+    if (`${p.name} ${p.client} ${p.category} ${p.method} ${p.id}`.toLowerCase().includes(query)) results.push({ type: "项目", label: p.name, sub: `${p.id} · ${p.client} · ${p.statusLabel}`, attr: `data-go="project/${p.id}/overview"` });
+    (p.functions || []).forEach((f) => { if (`${f.name} ${f.desc} ${f.id}`.toLowerCase().includes(query)) results.push({ type: "功能点", label: `${p.id} · ${f.name}`, sub: `${f.proposedType} → ${f.approvedType} · ${f.adjustment}`, attr: `data-go="fp/${p.id}"` }); });
+    (p.costItems || []).forEach((c) => { if (`${c.name} ${c.spec} ${c.id}`.toLowerCase().includes(query)) results.push({ type: "费用", label: `${p.id} · ${c.name}`, sub: `${c.adjustment} · ${money(c.submitted)} → ${money(c.approvedAmount)}`, attr: `data-go="cost/${p.id}"` }); });
+  });
+  (DATA.knowledge.entries || []).forEach((e) => { if (`${e.title} ${e.type} ${e.tags.join(" ")}`.toLowerCase().includes(query)) results.push({ type: "知识", label: e.title, sub: `${e.type} · ${e.source}`, attr: `data-go="kb"` }); });
+  (DATA.knowledge.qa || []).forEach((x) => { if (`${x.q} ${x.a}`.toLowerCase().includes(query)) results.push({ type: "问答", label: x.q, sub: "知识库问答", attr: `data-go="kb"` }); });
+  if (!results.length) { box.innerHTML = `<div class="search-empty">没有找到匹配内容。</div>`; box.hidden = false; return; }
+  box.innerHTML = results.slice(0, 12).map((r) => `<button class="search-result" ${r.attr}><span class="badge tone-slate" style="margin-right:4px;">${r.type}</span>${esc(r.label)}<small>${esc(r.sub)}</small></button>`).join("");
+  box.hidden = false;
+}
+
+/* ------------------------------------------------------------------ toast / actions */
+function toast(msg) { const el = $("#toast"); el.textContent = msg; el.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => { el.hidden = true; }, 2600); }
+function goTo(path) { closeSearch(); if (state.drawer) closeDrawer(); const h = "#/" + path; if (location.hash === h) render(); else location.hash = h; }
+function handleAction(action, el) {
+  if (action === "start-tour") return startTour();
+  if (action === "next-tour") return nextTour();
+  if (action === "prev-tour") return prevTour();
+  if (action === "exit-tour") return exitTour(false);
+  if (action === "close-drawer") return closeDrawer();
+  if (action === "print") { try { window.print(); } catch (e) { toast("当前预览环境不支持打印；请在浏览器中打开后打印。"); } return; }
+  if (action === "reset-demo") return resetDemo();
+  if (action === "accept-ai" || action === "reject-ai") {
+    const key = `${el.dataset.project}:${el.dataset.fp}`;
+    state.decisions[key] = action === "accept-ai" ? "已采纳" : "已驳回";
+    closeDrawer(); render(); toast(action === "accept-ai" ? "已采纳 AI 建议（演示）。" : "已驳回，转人工复核（演示）。"); return;
+  }
+  if (action === "close-tech") {
+    state.techStatus[el.dataset.tech] = "已闭环";
+    closeDrawer(); render(); toast("技术问题已标记闭环（演示）。"); return;
+  }
+}
+function resetDemo() {
+  state.decisions = {}; state.techStatus = {};
+  state.filters = { fpAdj: "all", fpType: "all", techProject: "all", techSeverity: "all" };
+  state.tour.active = false; $("#tourCard").hidden = true; state.kbQ = 0; state.version = {};
+  closeDrawer(); closeSearch(); goTo("overview"); toast("已恢复初始演示状态。");
+}
+
+/* ------------------------------------------------------------------ tour */
+function startTour() { closeDrawer(); state.tour.active = true; state.tour.step = 0; goTourStep(); }
+function goTourStep() {
+  const step = TOUR[state.tour.step];
+  if (!step) return exitTour(false);
+  goTo(step.route);
+  setTimeout(() => {
+    const el = document.querySelector(step.target);
+    if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
+    updateTourCard(); applyTourHighlight();
+  }, 160);
+}
+function updateTourCard() {
+  const step = TOUR[state.tour.step];
+  if (!step) return;
+  $("#tourCard").hidden = false;
+  $("#tourStepLabel").textContent = `${state.tour.step + 1} / ${TOUR.length}`;
+  $("#tourProgress").style.width = `${(state.tour.step + 1) / TOUR.length * 100}%`;
+  $("#tourTitle").textContent = step.title;
+  $("#tourText").textContent = step.text;
+  $("#tourNext").textContent = state.tour.step === TOUR.length - 1 ? "完成" : "下一步";
+  $("#tourPrev").disabled = state.tour.step === 0;
+}
+function nextTour() { if (!state.tour.active) return; if (state.tour.step >= TOUR.length - 1) return exitTour(true); state.tour.step += 1; goTourStep(); }
+function prevTour() { if (!state.tour.active || state.tour.step === 0) return; state.tour.step -= 1; goTourStep(); }
+function exitTour(done) {
+  state.tour.active = false; $("#tourCard").hidden = true;
+  $$(".tour-target").forEach((el) => el.classList.remove("tour-target"));
+  if (done) toast("导览完成。可点击任意项目继续查看。");
+}
+function applyTourHighlight() {
+  $$(".tour-target").forEach((el) => el.classList.remove("tour-target"));
+  if (!state.tour.active) return;
+  const step = TOUR[state.tour.step];
+  const el = step ? document.querySelector(step.target) : null;
+  if (el) el.classList.add("tour-target");
+}
+
+/* ------------------------------------------------------------------ events */
+document.addEventListener("click", (e) => {
+  const actionEl = e.target.closest("[data-action]");
+  if (actionEl) { e.preventDefault(); handleAction(actionEl.dataset.action, actionEl); return; }
+  const go = e.target.closest("[data-go]");
+  if (go) { e.preventDefault(); closeSearch(); goTo(go.dataset.go); return; }
+  const fp = e.target.closest("[data-open-fp]");
+  if (fp) { e.preventDefault(); openDrawer("fp", fp.dataset.openFp); return; }
+  const cost = e.target.closest("[data-open-cost]");
+  if (cost) { e.preventDefault(); openDrawer("cost", cost.dataset.openCost); return; }
+  const tech = e.target.closest("[data-open-tech]");
+  if (tech) { e.preventDefault(); openDrawer("tech", tech.dataset.openTech); return; }
+  const kb = e.target.closest("[data-open-kb]");
+  if (kb) { e.preventDefault(); openDrawer("kb", kb.dataset.openKb); return; }
+  const qa = e.target.closest("[data-qa]");
+  if (qa) { e.preventDefault(); state.kbQ = Number(qa.dataset.qa); render(); return; }
+  const ver = e.target.closest("[data-version]");
+  if (ver) { e.preventDefault(); state.version[ver.dataset.project] = ver.dataset.version; render(); return; }
+  const filter = e.target.closest("[data-filter]");
+  if (filter) { e.preventDefault(); closeSearch(); state.filters[filter.dataset.filter] = filter.dataset.value; render(); return; }
+  if (!e.target.closest(".search")) closeSearch();
+});
+document.addEventListener("change", (e) => {
+  const sel = e.target.closest("[data-select]");
+  if (!sel) return;
+  if (sel.dataset.select === "fpAdj") state.filters.fpAdj = sel.value;
+  render();
+});
+document.addEventListener("keydown", (e) => {
+  const t = e.target;
+  if ((e.key === "Enter" || e.key === " ") && t && t.matches && t.matches('[role="button"][data-go], [role="button"][data-open-fp], [role="button"][data-open-cost], [role="button"][data-open-tech], [role="button"][data-open-kb], [role="button"][data-qa]')) {
+    e.preventDefault(); t.click(); return;
+  }
+  if (e.key === "Escape") { if (state.drawer) closeDrawer(); else closeSearch(); if (state.tour.active) exitTour(false); return; }
+  if (state.tour.active && (e.key === "ArrowRight" || e.key === "ArrowLeft")) { e.preventDefault(); if (e.key === "ArrowRight") nextTour(); else prevTour(); return; }
+  if (e.key === "/" && document.activeElement && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { e.preventDefault(); $("#globalSearch").focus(); }
+});
+$("#drawerClose").addEventListener("click", closeDrawer);
+$("#drawerBackdrop").addEventListener("click", closeDrawer);
+$("#globalSearch").addEventListener("input", (e) => renderSearch(e.target.value));
+$("#globalSearch").addEventListener("focus", (e) => { if (e.target.value) renderSearch(e.target.value); });
+window.addEventListener("hashchange", () => { render(); });
+render();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+- insert:
+    - id: zts-review
+      name: '@local/zts-review'
