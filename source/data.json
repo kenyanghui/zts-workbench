@@ -20,8 +20,8 @@
   "stats": {
     "projects": 6,
     "submitted": 1694,
-    "approved": 1133,
-    "reduction": 561,
+    "approved": 1132.8,
+    "reduction": 561.2,
     "rate": 33.1,
     "highRisk": 2,
     "kbHit": 82,
@@ -79,7 +79,7 @@
           "rawFP": 18,
           "firstFP": 10,
           "approvedFP": 8,
-          "submittedAmount": 45,
+          "submittedAmount": 54,
           "firstAmount": 30,
           "approvedAmount": 24,
           "adjustment": "过度拆分",
@@ -103,8 +103,8 @@
           "rawFP": 14,
           "firstFP": 9,
           "approvedFP": 8,
-          "submittedAmount": 36,
-          "firstAmount": 30,
+          "submittedAmount": 42,
+          "firstAmount": 27,
           "approvedAmount": 24,
           "adjustment": "分类修正",
           "reason": "事项数据在本系统内维护，不是外部系统只读接口，应由 EIF 改判 ILF；金额按合并后口径重算。",
@@ -466,7 +466,7 @@
         "reclass": 3,
         "duplicate": 2,
         "excluded": 1,
-        "unit": "综合单价约 3.0 万元/FP（演示参数）"
+        "unit": "综合单价 3.0 万元/FP（演示参数）：每行金额 = FP × 单价；送审合计 = 186 FP × 3.0 精确成立，初稿/定稿合计为专家微调值（与 FP×3.0 测算差 ±1 万内）"
       },
       "reduction": 365,
       "rate": 65.4
@@ -1171,7 +1171,7 @@
           "approvedFP": 56,
           "submittedAmount": 26.0,
           "firstAmount": 22.8,
-          "approvedAmount": 20.3,
+          "approvedAmount": 20.2,
           "adjustment": "删除 1 个重复接口",
           "reason": "与已有接口重复，不单独计。",
           "basis": {
@@ -1198,7 +1198,7 @@
           "approvedFP": 80,
           "submittedAmount": 36.3,
           "firstAmount": 32.5,
-          "approvedAmount": 29.0,
+          "approvedAmount": 28.9,
           "adjustment": "合并 2 个输入",
           "reason": "同一业务对象的两个录入入口合并。",
           "basis": {
@@ -1306,7 +1306,7 @@
           "id": "V2",
           "label": "专家会后",
           "date": "2026-10-18",
-          "total": 144,
+          "total": 143.8,
           "note": "按专家意见合并重复接口/输入。",
           "comments": [
             "合并 1 个 EIF、2 个 EI、1 个 EO、2 个 EQ。",
@@ -1322,7 +1322,7 @@
       "methodKey": "five",
       "submitted": 180,
       "firstApproved": 162,
-      "approved": 144,
+      "approved": 143.8,
       "stage": "专家意见",
       "risk": "中",
       "statusLabel": "专家会",
@@ -1330,8 +1330,8 @@
       "owner": "南方电网某单位（合成）",
       "reviewer": "中通服评审组",
       "expert": "可研/造价专家",
-      "summary": "五点法识别 398 FP，×1.39=553.2 调整 FP，按 2600 元/人天折算 144 万；可研深度不足，专家会退回补充分类依据。",
-      "conclusion": "审定 144 万；可研补充后再提交专家会。",
+      "summary": "五点法识别 398 FP，×1.39=553.2 调整 FP，按 2600 元/人天折算 143.8 万；可研深度不足，专家会退回补充分类依据。",
+      "conclusion": "审定 143.8 万；可研补充后再提交专家会。",
       "next": "补充功能点分类依据，再开专家会。",
       "fpSummary": {
         "submittedFP": 436,
@@ -1347,18 +1347,18 @@
         "reclass": 0,
         "duplicate": 2,
         "excluded": 0,
-        "unit": "南网五点法：权重 ILF 10 / EIF 7 / EI 4 / EO 5 / EQ 4；系数 1.39；2600 元/人天"
+        "unit": "南网五点法：权重 ILF 10 / EIF 7 / EI 4 / EO 5 / EQ 4；系数 1.39；2600 元/人天；金额按 0.1 万元舍入，定稿 = 调整FP × 人天单价"
       },
-      "reduction": 36,
-      "rate": 20.0
+      "reduction": 36.2,
+      "rate": 20.1
     }
   ],
   "categoryTotals": [
     {
       "name": "软件开发",
       "submitted": 738,
-      "approved": 337,
-      "reduction": 401
+      "approved": 336.8,
+      "reduction": 401.2
     },
     {
       "name": "基础设施 / 租用软件",
@@ -1396,7 +1396,7 @@
       "name": "南方电网",
       "projects": 1,
       "submitted": 180,
-      "approved": 144
+      "approved": 143.8
     },
     {
       "name": "广东烟草",
@@ -1433,8 +1433,8 @@
     {
       "id": "F",
       "name": "南方电网某数字化平台可研（五点法）",
-      "reduction": 36,
-      "rate": 20.0
+      "reduction": 36.2,
+      "rate": 20.1
     },
     {
       "id": "E",

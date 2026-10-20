@@ -14,6 +14,10 @@
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg>
         <span>批次总览</span><span class="nav-count">6</span>
       </button>
+      <button class="nav-item" data-go="intake" data-nav="intake">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 12V5M7 8l3-3 3 3"/><path d="M4.5 12v2.5A1.5 1.5 0 0 0 6 16h8a1.5 1.5 0 0 0 1.5-1.5V12"/></svg>
+        <span>送审与产出</span>
+      </button>
       <button class="nav-item" data-go="projects" data-nav="projects">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h3l1.5 2h6.5A1.5 1.5 0 0 1 17 8.5v6A1.5 1.5 0 0 1 15.5 16h-11A1.5 1.5 0 0 1 3 14.5v-8Z"/></svg>
         <span>项目卷宗</span><span class="nav-count">6</span>
@@ -28,7 +32,7 @@
       </button>
       <button class="nav-item" data-go="tech" data-nav="tech">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1.5"/><path d="m6 10 2.2 2.2L14 6.8"/></svg>
-        <span>技术评审</span><span class="nav-count">17</span>
+        <span>技术评审</span><span class="nav-count">20</span>
       </button>
       <button class="nav-item" data-go="kb" data-nav="kb">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="10" cy="5" rx="6" ry="2.4"/><path d="M4 5v5c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4V5"/><path d="M4 10v5c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4v-5"/></svg>
@@ -54,12 +58,14 @@
       <div class="topbar-inner">
         <div class="crumbs" id="crumbs">批次总览</div>
         <div class="top-actions">
-          <span class="demo-pill" id="demoPill" hidden>演示状态已改变</span>
+          <!-- 演示状态徽标：状态变化需播报；polite（非紧急，不打断当前朗读）+ aria-atomic 整体播报（P-15） -->
+          <span class="demo-pill" id="demoPill" hidden aria-live="polite" aria-atomic="true">演示状态已改变</span>
           <span class="badge tone-green" style="font-size:10px;">内网部署</span>
           <div class="search">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="8.5" r="5"/><path d="m12.2 12.2 4.3 4.3"/></svg>
-            <input id="globalSearch" type="search" autocomplete="off" placeholder="搜索项目、功能点、费用项、依据  /" aria-label="搜索项目、功能点、费用项或依据">
-            <div class="search-results" id="searchResults" hidden></div>
+            <input id="globalSearch" type="search" autocomplete="off" placeholder="搜索项目、功能点、费用项、依据  /" aria-label="搜索项目、功能点、费用项或依据" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="searchResults">
+            <div class="search-results" id="searchResults" role="listbox" aria-label="搜索结果" hidden></div>
+            <div class="sr-only" id="searchStatus" role="status" aria-live="polite"></div>
           </div>
           <button class="btn btn-ghost" id="tourTopBtn" data-action="start-tour">▶ 5 分钟导览</button>
           <button class="btn" data-action="print">打印</button>
@@ -68,7 +74,7 @@
       </div>
     </header>
     <main class="view" id="view"></main>
-    <noscript><div style="padding:20px;color:#66798b;font-size:12px;">此工作台需要启用 JavaScript 才能交互；请允许脚本后刷新页面。</div></noscript>
+    <noscript><div style="padding:20px;color:var(--muted);font-size:12px;">此工作台需要启用 JavaScript 才能交互；请允许脚本后刷新页面。</div></noscript>
     <footer class="app-footer" style="max-width:1400px;width:100%;margin:0 auto;padding:10px 22px 18px;color:var(--muted);font-size:10.5px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;">
       <span>中通服项目评审工作台 · 合成演示 · 数据不出内网</span>
       <span>依据：标准规范 / 历史案例 / 合同 / 采购价 / 专家意见</span>
@@ -76,6 +82,17 @@
   </div>
 </div>
 
+<div class="doc-overlay" id="docOverlay" hidden>
+  <div class="doc-toolbar">
+    <span class="kicker" id="docKicker">评审意见书</span>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-primary btn-sm" data-action="export-opinion-word-doc" id="docExportWord">导出 Word</button>
+      <button class="btn btn-sm" data-action="print-doc">打印</button>
+      <button class="btn btn-sm" data-action="close-doc">关闭</button>
+    </div>
+  </div>
+  <div class="doc-scroll"><div class="doc-page" id="docPage"></div></div>
+</div>
 <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
 <aside class="drawer" id="drawer" hidden aria-hidden="true" aria-labelledby="drawerTitle" role="dialog" aria-modal="true">
   <div class="drawer-head">
@@ -100,4 +117,5 @@
   </div>
 </div>
 
-<div class="toast" id="toast" hidden></div>
+<!-- 操作结果提示：与 tourCard 的 aria-live=polite 播报行为对齐（P-15）；非报错类确认，故用 role=status/polite -->
+<div class="toast" id="toast" hidden role="status" aria-live="polite" aria-atomic="true"></div>

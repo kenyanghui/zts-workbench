@@ -80,7 +80,7 @@ a_functions = [
         "id": "A-01", "name": "用户管理", "desc": "用户、角色、组织、权限的统一管理，含新增、修改、停用、查询。",
         "proposedType": "ILF", "approvedType": "ILF",
         "rawFP": 18, "firstFP": 10, "approvedFP": 8,
-        "submittedAmount": 45, "firstAmount": 30, "approvedAmount": 24,
+        "submittedAmount": 54, "firstAmount": 30, "approvedAmount": 24,
         "adjustment": "过度拆分",
         "reason": "用户、角色、组织拆成 3 个 ILF，实际共享同一数据组，合并为 1 个 ILF。",
         "basis": STD_ILF, "caseRef": "CASE-2025-037 某厅局用户管理模块审减 42%",
@@ -90,7 +90,7 @@ a_functions = [
         "id": "A-02", "name": "事项管理", "desc": "事项配置、流程编排、状态流转和办件查询。",
         "proposedType": "EIF", "approvedType": "ILF",
         "rawFP": 14, "firstFP": 9, "approvedFP": 8,
-        "submittedAmount": 36, "firstAmount": 30, "approvedAmount": 24,
+        "submittedAmount": 42, "firstAmount": 27, "approvedAmount": 24,
         "adjustment": "分类修正",
         "reason": "事项数据在本系统内维护，不是外部系统只读接口，应由 EIF 改判 ILF；金额按合并后口径重算。",
         "basis": STD_EIF, "caseRef": "CASE-2026-014 某市事项管理 EIF 改判 ILF",
@@ -212,7 +212,7 @@ A = project(
     fpSummary={
         "submittedFP": 186, "firstFP": 90, "approvedFP": 64,
         "items": 86, "approvedItems": 74, "overSplit": 12, "reclass": 3,
-        "duplicate": 2, "excluded": 1, "unit": "综合单价约 3.0 万元/FP（演示参数）",
+        "duplicate": 2, "excluded": 1, "unit": "综合单价 3.0 万元/FP（演示参数）：每行金额 = FP × 单价；送审合计 = 186 FP × 3.0 精确成立，初稿/定稿合计为专家微调值（与 FP×3.0 测算差 ±1 万内）",
     },
     functions=a_functions,
     materials=[
@@ -428,60 +428,79 @@ E = project(
 projects.append(E)
 
 # ------------------------------------------------------------------ F
+# 南网五点法参数（单一事实来源）：
+# 审定链 = 审定FP × 调整系数 → 调整FP（=人天）→ × 人天单价 → 折算投资 = 定稿金额。
+# 金额统一按 0.1 万元舍入（n3 口径：定稿金额与折算公式同源，屏上不再出现 143.8 与 144 两个口径并存）。
+F_COEFFICIENT = 1.39
+F_UNIT_PRICE = 2600
+
+
+def five_amount(fp):
+    """审定金额（万元）= 审定FP × 调整系数 × 人天单价 / 10000，按 0.1 万元舍入。"""
+    return round(fp * F_COEFFICIENT * F_UNIT_PRICE / 10000, 1)
+
+
 f_functions = [
     {"id": "F-ILF", "name": "内部逻辑文件（ILF）", "desc": "平台主数据、业务数据等 12 个数据组；送审 13 个，合并 1 个。",
      "proposedType": "ILF", "approvedType": "ILF", "quantity": 13, "approvedQty": 12, "weight": 10,
      "rawFP": 130, "firstFP": 130, "approvedFP": 120,
-     "submittedAmount": 53.7, "firstAmount": 48.6, "approvedAmount": 43.4,
+     "submittedAmount": 53.7, "firstAmount": 48.6, "approvedAmount": five_amount(120),
      "adjustment": "合并 1 个数据组", "reason": "客户主数据与供应商主数据共享同一数据组，合并为 1 个 ILF。",
      "basis": STD_FIVE, "caseRef": "CASE-2026-031 南网五点法分类复核",
      "aiSuggestion": "合并 1 个 ILF", "confidence": 0.88, "decision": "已采纳"},
     {"id": "F-EIF", "name": "外部接口文件（EIF）", "desc": "只读引用外部系统数据组 8 个；送审 9 个，剔除 1 个重复接口。",
      "proposedType": "EIF", "approvedType": "EIF", "quantity": 9, "approvedQty": 8, "weight": 7,
      "rawFP": 63, "firstFP": 63, "approvedFP": 56,
-     "submittedAmount": 26.0, "firstAmount": 22.8, "approvedAmount": 20.3,
+     "submittedAmount": 26.0, "firstAmount": 22.8, "approvedAmount": five_amount(56),
      "adjustment": "删除 1 个重复接口", "reason": "与已有接口重复，不单独计。",
      "basis": STD_FIVE, "caseRef": "CASE-2026-031",
      "aiSuggestion": "删除重复接口", "confidence": 0.84, "decision": "已采纳"},
     {"id": "F-EI", "name": "外部输入（EI）", "desc": "外部输入事务 22 个；送审 22 个，合并 2 个。",
      "proposedType": "EI", "approvedType": "EI", "quantity": 22, "approvedQty": 20, "weight": 4,
      "rawFP": 88, "firstFP": 88, "approvedFP": 80,
-     "submittedAmount": 36.3, "firstAmount": 32.5, "approvedAmount": 29.0,
+     "submittedAmount": 36.3, "firstAmount": 32.5, "approvedAmount": five_amount(80),
      "adjustment": "合并 2 个输入", "reason": "同一业务对象的两个录入入口合并。",
      "basis": STD_FIVE, "caseRef": "CASE-2026-031",
      "aiSuggestion": "合并 2 个 EI", "confidence": 0.79, "decision": "待确认"},
     {"id": "F-EO", "name": "外部输出（EO）", "desc": "外部输出事务 15 个；送审 15 个，合并 1 个。",
      "proposedType": "EO", "approvedType": "EO", "quantity": 15, "approvedQty": 14, "weight": 5,
      "rawFP": 75, "firstFP": 75, "approvedFP": 70,
-     "submittedAmount": 31.0, "firstAmount": 28.4, "approvedAmount": 25.3,
+     "submittedAmount": 31.0, "firstAmount": 28.4, "approvedAmount": five_amount(70),
      "adjustment": "合并 1 个输出；1 个无计算改判 EQ", "reason": "两个报表输出共用同一数据源和格式，合并；另有 1 个无公式计算、只是呈现，应改判为外部查询（EQ），按 EQ 审减。",
      "basis": STD_FIVE, "caseRef": "CASE-2026-031",
      "aiSuggestion": "合并 1 个 EO", "confidence": 0.81, "decision": "已采纳"},
     {"id": "F-EQ", "name": "外部查询（EQ）", "desc": "外部查询事务 20 个；送审 20 个，合并 2 个。",
      "proposedType": "EQ", "approvedType": "EQ", "quantity": 20, "approvedQty": 18, "weight": 4,
      "rawFP": 80, "firstFP": 80, "approvedFP": 72,
-     "submittedAmount": 33.0, "firstAmount": 29.7, "approvedAmount": 26.0,
+     "submittedAmount": 33.0, "firstAmount": 29.7, "approvedAmount": five_amount(72),
      "adjustment": "合并 2 个查询", "reason": "同一查询条件的两个入口合并。",
      "basis": STD_FIVE, "caseRef": "CASE-2026-031",
      "aiSuggestion": "合并 2 个 EQ", "confidence": 0.77, "decision": "已采纳"},
 ]
 
+# 审定链派生（398×1.39 算式的单一来源，n3 断言与独立校验均以此为契约）：
+F_APPROVED_FP = sum(f["approvedFP"] for f in f_functions)    # 120+56+80+70+72 = 398
+F_SUBMITTED_FP = sum(f["rawFP"] for f in f_functions)        # 436
+F_FIRST_FP = sum(f["firstFP"] for f in f_functions)          # 436
+F_ADJUSTED_FP = round(F_APPROVED_FP * F_COEFFICIENT, 1)      # 398 × 1.39 = 553.22 → 553.2（人天）
+F_APPROVED = round(F_ADJUSTED_FP * F_UNIT_PRICE / 10000, 1)  # 553.2 人天 × 2600 元 = 143.8 万（定稿）
+
 F = project(
     id="F", name="南方电网某数字化平台可研（五点法）", client="南方电网",
     category="软件开发", method="南网五点法（ILF/EIF/EI/EO/EQ）", methodKey="five",
-    submitted=180, firstApproved=162, approved=144,
+    submitted=180, firstApproved=162, approved=F_APPROVED,
     stage="专家意见", stageIndex=4, risk="中", riskKey="mid",
     statusLabel="专家会", statusTone="blue", updated="2026-10-18",
     owner="南方电网某单位（合成）", reviewer="中通服评审组", expert="可研/造价专家",
-    summary="五点法识别 398 FP，×1.39=553.2 调整 FP，按 2600 元/人天折算 144 万；可研深度不足，专家会退回补充分类依据。",
-    conclusion="审定 144 万；可研补充后再提交专家会。",
+    summary=f"五点法识别 {F_APPROVED_FP} FP，×{F_COEFFICIENT}={F_ADJUSTED_FP} 调整 FP，按 {F_UNIT_PRICE} 元/人天折算 {F_APPROVED} 万；可研深度不足，专家会退回补充分类依据。",
+    conclusion=f"审定 {F_APPROVED} 万；可研补充后再提交专家会。",
     next="补充功能点分类依据，再开专家会。",
     fpSummary={
-        "submittedFP": 436, "firstFP": 436, "approvedFP": 398,
-        "adjustedFP": 553.2, "personDays": 553.2, "unitPrice": 2600,
-        "coefficient": 1.39, "items": 5, "approvedItems": 5,
+        "submittedFP": F_SUBMITTED_FP, "firstFP": F_FIRST_FP, "approvedFP": F_APPROVED_FP,
+        "adjustedFP": F_ADJUSTED_FP, "personDays": F_ADJUSTED_FP, "unitPrice": F_UNIT_PRICE,
+        "coefficient": F_COEFFICIENT, "items": 5, "approvedItems": 5,
         "overSplit": 0, "reclass": 0, "duplicate": 2, "excluded": 0,
-        "unit": "南网五点法：权重 ILF 10 / EIF 7 / EI 4 / EO 5 / EQ 4；系数 1.39；2600 元/人天",
+        "unit": "南网五点法：权重 ILF 10 / EIF 7 / EI 4 / EO 5 / EQ 4；系数 1.39；2600 元/人天；金额按 0.1 万元舍入，定稿 = 调整FP × 人天单价",
     },
     functions=f_functions,
     materials=[
@@ -496,7 +515,7 @@ F = project(
     ],
     versions=[
         {"id": "V1", "label": "初稿", "date": "2026-10-09", "total": 162, "note": "按五点法初核。", "comments": []},
-        {"id": "V2", "label": "专家会后", "date": "2026-10-18", "total": 144, "note": "按专家意见合并重复接口/输入。", "comments": [
+        {"id": "V2", "label": "专家会后", "date": "2026-10-18", "total": F_APPROVED, "note": "按专家意见合并重复接口/输入。", "comments": [
             "合并 1 个 EIF、2 个 EI、1 个 EO、2 个 EQ。",
             "可研深度不足，补充后再提交专家会。",
         ]},
@@ -599,6 +618,158 @@ for name, items in client_groups.items():
 
 top_reductions = sorted(projects, key=lambda p: p["reduction"], reverse=True)
 
+# ------------------------------------------------------------------ 数据契约断言（n3：构建期 fail-fast，挡住口径漂移）
+MONEY_TOL = 0.005      # 金额比较容差：存储精度 0.1 万，容差仅吸收浮点噪声
+A_UNIT_PRICE = 3.0     # A 项目两点法综合单价（万元/FP），口径见 A.fpSummary.unit
+A_MICRO_TOL = 1.0      # A 初稿/定稿合计为专家微调值，与 FP×单价 测算差 ≤ ±1 万
+RESIDUAL_PRICE_RANGE = (2.9, 3.1)  # A 汇总残差行（OTHER）综合单价允许区间
+
+
+def _fail(msg):
+    raise SystemExit(f"[build_data] 数据自洽校验失败: {msg}")
+
+
+def _close(a, b, tol=MONEY_TOL):
+    return abs(a - b) <= tol
+
+
+def _project_contract(p):
+    # 审减 / 审减率与送审、定稿自洽
+    if not _close(p["reduction"], round(p["submitted"] - p["approved"], 1)):
+        _fail(f"{p['id']} reduction != submitted - approved")
+    if not _close(p["rate"], round(p["reduction"] / p["submitted"] * 100, 1)):
+        _fail(f"{p['id']} rate != reduction / submitted")
+    # 版本台账：首版=初稿、末版=定稿、逐版不回升
+    totals = [v["total"] for v in p["versions"]]
+    if not _close(totals[0], p["firstApproved"]) or not _close(totals[-1], p["approved"]):
+        _fail(f"{p['id']} versions 首末版金额与 firstApproved/approved 不一致")
+    if any(totals[i] < totals[i + 1] for i in range(len(totals) - 1)):
+        _fail(f"{p['id']} versions 金额逐版回升")
+    # 费用明细三列加总 = 项目合计（B/C/D/E）
+    if p["costItems"]:
+        pairs = (("submitted", "submitted"), ("firstAmount", "firstApproved"), ("approvedAmount", "approved"))
+        for key, total_key in pairs:
+            s = round(sum(c[key] for c in p["costItems"]), 6)
+            if not _close(s, p[total_key]):
+                _fail(f"{p['id']} costItems.{key} 合计 {s} != 项目 {total_key} {p[total_key]}")
+
+
+def _project_a_contract(a):
+    """两点法算式：每行金额 = FP × 3.0；送审合计精确成立；初稿/定稿合计为专家微调（±1 万）。"""
+    fp = a["fpSummary"]
+    amt_of = {"rawFP": "submittedAmount", "firstFP": "firstAmount", "approvedFP": "approvedAmount"}
+    total_of = {"submittedAmount": "submitted", "firstAmount": "firstApproved", "approvedAmount": "approved"}
+    fp_of = {"rawFP": "submittedFP", "firstFP": "firstFP", "approvedFP": "approvedFP"}
+    for r in a["functions"]:
+        for fp_key, amt_key in amt_of.items():
+            if not _close(r[amt_key], r[fp_key] * A_UNIT_PRICE):
+                _fail(f"A/{r['id']} {amt_key} {r[amt_key]} != {fp_key}×{A_UNIT_PRICE} = {r[fp_key] * A_UNIT_PRICE}")
+    if not _close(fp["submittedFP"] * A_UNIT_PRICE, a["submitted"]):
+        _fail(f"A 送审算式不成立：{fp['submittedFP']} FP × {A_UNIT_PRICE} != 送审 {a['submitted']}")
+    for fp_key, total_key in (("firstFP", "firstApproved"), ("approvedFP", "approved")):
+        if abs(fp[fp_key] * A_UNIT_PRICE - a[total_key]) > A_MICRO_TOL:
+            _fail(f"A {total_key} 偏离 {fp_key}×{A_UNIT_PRICE} 测算超 ±{A_MICRO_TOL} 万（口径：专家微调）")
+    # 明细不得超出汇总（UI 的 OTHER 残差行不能出负数），残差行综合单价贴近 3.0
+    for fp_key, amt_key in amt_of.items():
+        detail_fp = sum(r[fp_key] for r in a["functions"])
+        detail_amt = sum(r[amt_key] for r in a["functions"])
+        if detail_fp > fp[fp_of[fp_key]] or detail_amt > a[total_of[amt_key]]:
+            _fail(f"A 明细 {fp_key}/{amt_key} 合计超出汇总，OTHER 残差行将为负")
+        residual_fp, residual_amt = fp[fp_of[fp_key]] - detail_fp, a[total_of[amt_key]] - detail_amt
+        if residual_fp > 0 and not RESIDUAL_PRICE_RANGE[0] <= residual_amt / residual_fp <= RESIDUAL_PRICE_RANGE[1]:
+            _fail(f"A 汇总残差行综合单价 {residual_amt / residual_fp:.3f} 偏离 {A_UNIT_PRICE} 万/FP")
+
+
+def _project_f_contract(f):
+    """五点法算式：数量×权重=FP；审定金额=审定FP×系数×单价；调整FP=审定FP×系数；折算=定稿。"""
+    fp = f["fpSummary"]
+    coef, price = fp["coefficient"], fp["unitPrice"]
+    for r in f["functions"]:
+        if r["rawFP"] != r["quantity"] * r["weight"] or r["approvedFP"] != r["approvedQty"] * r["weight"]:
+            _fail(f"F/{r['id']} 数量×权重 != FP")
+        if not _close(r["approvedAmount"], round(r["approvedFP"] * coef * price / 10000, 1)):
+            _fail(f"F/{r['id']} approvedAmount != 审定FP×{coef}×{price}/10000（0.1 万舍入）")
+    if fp["approvedFP"] != sum(r["approvedFP"] for r in f["functions"]):
+        _fail("F fpSummary.approvedFP != 分类型审定 FP 合计")
+    if fp["submittedFP"] != sum(r["rawFP"] for r in f["functions"]) or fp["firstFP"] != sum(r["firstFP"] for r in f["functions"]):
+        _fail("F fpSummary 送审/初稿 FP != 分类型合计")
+    if not _close(sum(r["submittedAmount"] for r in f["functions"]), f["submitted"]) or not _close(sum(r["firstAmount"] for r in f["functions"]), f["firstApproved"]):
+        _fail("F 送审/初稿金额明细合计 != 项目合计")
+    if not _close(sum(r["approvedAmount"] for r in f["functions"]), f["approved"]):
+        _fail("F 审定金额明细合计 != 定稿")
+    if fp["adjustedFP"] != round(fp["approvedFP"] * coef, 1) or fp["personDays"] != fp["adjustedFP"]:
+        _fail(f"F 调整后FP/人天 != 审定FP×{coef}（398×1.39 算式）")
+    if round(fp["personDays"] * price / 10000, 1) != f["approved"]:
+        _fail(f"F 折算投资 {round(fp['personDays'] * price / 10000, 1)} != 定稿 {f['approved']}")
+
+
+def _totals_contract(data):
+    projects, stats = data["projects"], data["stats"]
+    if stats["projects"] != len(projects):
+        _fail("stats.projects != 项目数")
+    for key in ("submitted", "approved"):
+        if not _close(stats[key], round(sum(p[key] for p in projects), 1)):
+            _fail(f"stats.{key} != 逐项目加总")
+    if not _close(stats["reduction"], round(stats["submitted"] - stats["approved"], 1)):
+        _fail("stats.reduction != 送审 - 定稿")
+    if not _close(stats["rate"], round(stats["reduction"] / stats["submitted"] * 100, 1)):
+        _fail("stats.rate != 审减率")
+    if stats["highRisk"] != sum(1 for p in projects if p["riskKey"] == "high"):
+        _fail("stats.highRisk != 高风险项目数")
+    # categoryTotals：按类别重分组逐项对账，且合计回流 stats
+    by_cat = {}
+    for p in projects:
+        by_cat.setdefault(p["category"], []).append(p)
+    if [c["name"] for c in data["categoryTotals"]] != list(by_cat):
+        _fail("categoryTotals 类别集合与项目数据不一致")
+    for c in data["categoryTotals"]:
+        rows = by_cat[c["name"]]
+        for key in ("submitted", "approved", "reduction"):
+            if not _close(c[key], round(sum(r[key] for r in rows), 6)):
+                _fail(f"categoryTotals[{c['name']}].{key} != 项目加总")
+    for key in ("submitted", "approved"):
+        if not _close(sum(c[key] for c in data["categoryTotals"]), stats[key]):
+            _fail(f"categoryTotals {key} 合计 != stats")
+    # clientTotals：按业主归组规则重分组对账
+    groups = {"财政体系": [], "南方电网": [], "广东烟草": []}
+    for p in projects:
+        if p["client"].startswith("广东省财政厅"):
+            groups["财政体系"].append(p)
+        elif p["client"] == "南方电网":
+            groups["南方电网"].append(p)
+        else:
+            groups["广东烟草"].append(p)
+    for c in data["clientTotals"]:
+        rows = groups.get(c["name"])
+        if rows is None or c["projects"] != len(rows) \
+                or not _close(c["submitted"], sum(r["submitted"] for r in rows)) \
+                or not _close(c["approved"], sum(r["approved"] for r in rows)):
+            _fail(f"clientTotals[{c.get('name')}] != 项目加总")
+    if sum(c["projects"] for c in data["clientTotals"]) != len(projects) \
+            or not _close(sum(c["approved"] for c in data["clientTotals"]), stats["approved"]) \
+            or not _close(sum(c["submitted"] for c in data["clientTotals"]), stats["submitted"]):
+        _fail("clientTotals 合计 != stats")
+    # topReductions：排序与字段与项目审减完全一致
+    expected = sorted(projects, key=lambda p: p["reduction"], reverse=True)
+    if [t["id"] for t in data["topReductions"]] != [p["id"] for p in expected]:
+        _fail("topReductions 排序 != 项目审减降序")
+    for t, p in zip(data["topReductions"], expected):
+        if t["name"] != p["name"] or not _close(t["reduction"], p["reduction"]) or not _close(t["rate"], p["rate"]):
+            _fail(f"topReductions[{t['id']}] 字段与项目不一致")
+
+
+def check(data):
+    for p in data["projects"]:
+        _project_contract(p)
+    by_id = {p["id"]: p for p in data["projects"]}
+    if "A" not in by_id or "F" not in by_id:
+        _fail("缺少项目 A / F")
+    _project_a_contract(by_id["A"])
+    _project_f_contract(by_id["F"])
+    _totals_contract(data)
+    return data
+
+
 data = {
     "meta": {
         "brand": "中通服项目评审工作台",
@@ -629,6 +800,7 @@ data = {
     "knowledge": knowledge,
 }
 
+check(data)
 OUT.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 print("wrote", OUT, len(OUT.read_text(encoding="utf-8")), "chars")
 print("stats", data["stats"])
