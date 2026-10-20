@@ -100,15 +100,15 @@ function projectCard(p) {
 
 /* ------------------------------------------------------------------ overview */
 function overviewBanner(s) {
-  return `<div class="info-banner"><b>本批结论：</b>6 个项目，送审 ${money(s.submitted)}，审定 ${money(s.approved)}，审减 <b>${money(s.reduction)}（${pct(s.rate)}）</b>。A 项目功能点审核 558 → 269 → 193 万，是本次演示主线；F 项目展示南网五点法。</div>`;
+  return `<div class="info-banner"><b>本批结论：</b>${DATA.projects.length} 个典型项目，送审 ${money(s.submitted)}，审定 ${money(s.approved)}，审减 <b>${money(s.reduction)}（${pct(s.rate)}）</b>。A 项目演示第三方/租赁全额核减与功能点重计(ILF 442→2);B 项目演示部署人月逐项取定。</div>`;
 }
 function overviewKpiGrid(s) {
   return `<div class="kpi-grid" id="kpiGrid">
-      ${kpi("本批项目", s.projects, "财政 / 南网 / 烟草", "", "projects")}
-      ${kpi("送审金额", `${num(s.submitted)} 万`, "6 个项目合计", "", "projects")}
+      ${kpi("本批项目", s.projects, "真实资料脱敏重构", "", "projects")}
+      ${kpi("送审金额", `${num(s.submitted)} 万`, `${DATA.projects.length} 个项目合计`, "", "projects")}
       ${kpi("审定金额", `${num(s.approved)} 万`, `审减 ${num(s.reduction)} 万`, "green", "audit/A")}
       ${kpi("审减率", pct(s.rate), "按送审额计算", "amber", "audit/A")}
-      ${kpi("高风险项目", s.highRisk, "A 功能点 / D 运营", "warn", "tech")}
+      ${kpi("高风险项目", s.highRisk, "按审定结论", "warn", "tech")}
       ${kpi("知识库命中", `${s.kbHit}%`, "依据覆盖率 96%", "green", "kb")}
     </div>`;
 }
@@ -121,7 +121,7 @@ function overviewTopPanels(top) {
         <p class="mini-chart-note">软件类送审 ${num(soft.submitted)} 万、审定 ${num(soft.approved)} 万，是本批审减的主要来源。</p>
       </section>
       <section class="panel">
-        <div class="panel-head"><h2>业主分布</h2><span class="hint">财政 / 南网 / 烟草</span></div>
+        <div class="panel-head"><h2>业主分布</h2><span class="hint">按委托业主(脱敏)</span></div>
         ${DATA.clientTotals.map((c) => barRow(`${c.name}（${c.projects}）`, c.approved, c.submitted)).join("")}
         <p class="mini-chart-note">财政体系 4 个项目；南网、烟草各 1 个，用于展示五点法和第三方服务口径。</p>
       </section>
@@ -154,15 +154,15 @@ function overviewActionsPanel(actions) {
 }
 function overviewMethodPanel() {
   return `<section class="panel">
-      <div class="panel-head"><h2>审核方法</h2><span class="hint">四条线，四种口径</span></div>
+      <div class="panel-head"><h2>审核方法</h2><span class="hint">本批用到的四类口径</span></div>
       <div class="method-strip">
-        <span class="method-chip"><b>财政两点法</b> ILF 35 / EIF 15 → 人月</span>
-        <span class="method-chip"><b>南网五点法</b> ILF/EIF/EI/EO/EQ → ×1.39 → 2600 元/人天</span>
-        <span class="method-chip"><b>采购价 + 合同</b> 基础设施 / 租用软件</span>
-        <span class="method-chip"><b>运维比例</b> 保修期内 8% / 外 6.5%</span>
-        <span class="method-chip"><b>运营人天</b> 人头 + 工作量 + 专家判断</span>
+        <span class="method-chip"><b>两点法 + 复用系数</b> ILF 442→2 · 未调整点 16115→85</span>
+        <span class="method-chip"><b>第三方口径</b> 设计/监理/等保/商密不计入建设投资</span>
+        <span class="method-chip"><b>人月等级取定</b> 高级 2.35 / 中级 1.75 / 初级 1.35 万</span>
+        <span class="method-chip"><b>监理费内插法</b> y=k(x-b)+a · 调整系数 1.5</span>
+        <span class="method-chip"><b>整合口径</b> 重复建设整项核减(遥感/综合/空气预报)</span>
       </div>
-      <p class="mini-chart-note">知识库：标准规范 12 份、历史案例 86 个、会议纪要 24 份、价格库 1,240 条；AI 建议必须带引用，人确认后才进入审定表。</p>
+      <p class="mini-chart-note">知识库：两点法基准、方案编写规范(2023)、政采中心收费标准、等保/商密计费、本批案例；AI 建议必须带引用，人确认后才进入审定表。</p>
     </section>`;
 }
 function renderOverview() {
@@ -176,7 +176,7 @@ function renderOverview() {
       <button class="btn btn-ghost" data-go="audit/A">查看审定表</button>`)}
     ${overviewBanner(s)}
     ${overviewKpiGrid(s)}
-    ${sectionHead("项目卷宗", "6 个项目 · 点击打开卷宗")}
+    ${sectionHead("项目卷宗", `${DATA.projects.length} 个项目 · 点击打开卷宗`)}
     <div class="project-grid">${DATA.projects.map(projectCard).join("")}</div>
     ${overviewTopPanels(top)}
     ${overviewIssuePanels(high, pending)}
@@ -217,7 +217,7 @@ function renderProject(id, tab) {
   else if (currentTab === "detail") body = p.functions.length ? fpPanel(p) : costPanel(p);
   else if (currentTab === "tech") body = techPanel(p);
   else if (currentTab === "versions") body = versionsPanel(p);
-  else if (currentTab === "audit") body = `<div class="section-head" style="margin-top:0"><h2>审定表</h2><span class="hint">定稿版 · 只出表，不提整改建议</span></div>${auditTable(p)}`;
+  else if (currentTab === "audit") body = `<div class="page-actions" style="justify-content:flex-start;margin-bottom:10px;"><button class="btn btn-primary" data-action="preview-doc" data-project="${p.id}">预览评审意见书</button><button class="btn" data-action="export-opinion-word" data-project="${p.id}">导出意见书 (.doc)</button><button class="btn" data-action="export-audit-xlsx" data-project="${p.id}">导出审定表 (.xlsx)</button></div><div class="section-head" style="margin-top:0"><h2>审定表</h2><span class="hint">定稿版 · 只出表，不提整改建议</span></div>${auditTable(p)}`;
   else body = projectOverview(p);
   return `
   <div class="detail-top">
@@ -517,6 +517,7 @@ function versionsPanel(p) {
 
 /* ------------------------------------------------------------------ audit table */
 function auditRows(p) {
+  if (p.costItems.length) return p.costItems.map((c) => ({ id: c.id, name: c.name, spec: c.spec, qty: c.qty, unit: c.unit, submittedAmount: c.submitted, firstAmount: c.firstAmount, approvedAmount: c.approvedAmount, adjustment: c.adjustment, basis: c.basis }));
   if (p.functions.length) return p.methodKey === "two" ? twoPointRows(p) : p.functions.slice();
   return p.costItems.map((c) => ({
     id: c.id, name: c.name, spec: c.spec, qty: c.qty, unit: c.unit,
@@ -531,7 +532,7 @@ function auditTable(p) {
   return `<section class="panel">
     <div class="panel-head"><h2>${isFp ? "功能点审定表" : "费用审定表"}</h2><span class="hint">${esc(p.id)} · ${esc(p.name)} · 定稿 ${latestVersion(p).id}</span></div>
     <div class="table-wrap"><table class="table-compact" id="auditTable"><thead><tr><th>序号</th><th>${isFp ? "功能项" : "费用项"}</th><th class="num">送审</th><th class="num">初稿</th><th class="num">定稿</th><th class="num">审减</th><th class="num">审减率</th><th>依据</th></tr></thead><tbody>
-      ${rows.map((r, i) => { const other = r.id.endsWith("-OTHER"); return `<tr class="${other ? "" : "row-open"}" ${other ? "" : `tabindex="0" ${isFp ? `data-open-fp="${p.id}|${r.id}"` : `data-open-cost="${p.id}|${r.id}"`}`}><td class="cell-nowrap">${i + 1}</td><td><strong>${esc(r.name)}</strong>${r.spec ? `<div class="small muted">${esc(r.spec)}</div>` : ""}</td><td class="num">${money(r.submittedAmount)}</td><td class="num">${money(r.firstAmount)}</td><td class="num amount-strong">${money(r.approvedAmount)}</td><td class="num reduction">${cutText((r.submittedAmount || 0) - (r.approvedAmount || 0))}</td><td class="num">${r.submittedAmount ? pct((r.submittedAmount - r.approvedAmount) / r.submittedAmount * 100) : "—"}</td><td class="small">${esc((r.basis && (r.basis.clause || r.basis.source)) || r.adjustment || "—")}</td></tr>`; }).join("")}
+      ${rows.map((r, i) => { const other = r.id.endsWith("-OTHER"); return `<tr class="${other ? "" : "row-open"}" ${other ? "" : `tabindex="0" ${isFp ? `data-open-fp="${p.id}|${r.id}"` : `data-open-cost="${p.id}|${r.id}"`}`}><td class="cell-nowrap">${i + 1}</td><td style="padding-left:${(String(r.id || "").split(".").length - 1) * 12}px"><strong>${esc(r.name)}</strong>${r.spec ? `<div class="small muted">${esc(r.spec)}</div>` : ""}</td><td class="num">${money(r.submittedAmount)}</td><td class="num">${money(r.firstAmount)}</td><td class="num amount-strong">${money(r.approvedAmount)}</td><td class="num reduction">${cutText((r.submittedAmount || 0) - (r.approvedAmount || 0))}</td><td class="num">${r.submittedAmount ? pct((r.submittedAmount - r.approvedAmount) / r.submittedAmount * 100) : "—"}</td><td class="small">${esc((r.basis && (r.basis.clause || r.basis.source)) || r.adjustment || "—")}</td></tr>`; }).join("")}
       <tr class="table-total"><td colspan="2">合计</td><td class="num">${money(total.s)}</td><td class="num">${money(total.f)}</td><td class="num">${money(total.d)}</td><td class="num reduction">${cutText(total.s - total.d)}</td><td class="num">${total.s ? pct((total.s - total.d) / total.s * 100) : "—"}</td><td>—</td></tr>
     </tbody></table></div>
     <p class="table-note">审定表只给结论和金额，不提整改建议；甲方按审定价招标。交付：结果件为审定报告（Word + Excel），过程件为初稿表与评审意见；财政评审另需内部流转报告（文字）。金额为合成示例。</p>
@@ -650,20 +651,18 @@ function renderArch() {
 /* ------------------------------------------------------------------ tour page */
 /* 导览叙述数字派生化（P-07 残留面）：口径与 KPI/审定表一致，数据更新不再失真。
    F 折算投资与 fivePointTable 同式（personDays × unitPrice，0.1 万舍入） */
-const tourF = projectById("F") || {};
-const tourFp = tourF.fpSummary || {};
-const tourFInvest = tourFp.personDays != null ? money(Math.round(tourFp.personDays * tourFp.unitPrice / 10000 * 10) / 10) : "—";
 const TOUR = [
-  { route: "overview", target: "#kpiGrid", title: "先看本批规模", text: `${DATA.stats.projects} 个项目、送审 ${num(DATA.stats.submitted)} 万、审定 ${num(DATA.stats.approved)} 万、审减 ${num(DATA.stats.reduction)} 万（${pct(DATA.stats.rate)}）。先给结论，再进入功能点。` },
-  { route: "project/A/overview", target: "#projectHeader", title: "项目 A：558 → 269 → 193", text: "送审 558 万，初稿 269 万，专家意见后定稿 193 万。项目卷宗把送审、初稿、定稿、审减放在同一屏。" },
-  { route: "fp/A", target: "#fpTable", title: "功能点怎么重认定", text: "12 项典型调整：过度拆分合并、EIF/ILF 误判、报表/大屏不计、历史迁移一次性不计。点每行看依据。" },
-  { route: "project/A/versions", target: "#versionTimeline", title: "多轮版本", text: "V1 269 → V2 214 → V3 193；专家意见和每版差异都留痕，定稿锁定。" },
-  { route: "project/F/detail", target: "#fpSummary", title: "南网五点法", text: `ILF/EIF/EI/EO/EQ，${tourFp.approvedFP} FP ×${tourFp.coefficient}=${num(tourFp.adjustedFP)} 调整 FP，按 ${num(tourFp.unitPrice)} 元/人天折算 ${tourFInvest}。` },
-  { route: "kb", target: "#kbQA", title: "知识库：依据从哪来", text: "标准、案例、会议纪要、价格库、合同库；每条回答带引用，没有引用就不出结论。" },
+  { route: "overview", target: "#kpiGrid", title: "先看本批规模", text: `${DATA.stats.projects} 个典型项目、送审 ${num(DATA.stats.submitted)} 万、审定 ${num(DATA.stats.approved)} 万、审减 ${num(DATA.stats.reduction)} 万（${pct(DATA.stats.rate)}）。先给结论，再走流程。` },
+  { route: "intake", target: "#intakeDrop", title: "送审材料从这里进", text: "Word/Excel/PDF 拖拽上传，浏览器本地解析(离线可用)；评审完成后在同一页预览并导出意见书与审定表。" },
+  { route: "project/A/overview", target: "#projectHeader", title: "项目 A：1369.5 → 13.4", text: "送审 1369.53 万，审定 13.41 万。第三方、成品租赁、重复建设的整项核减与功能点重计在同一屏可追溯。" },
+  { route: "fp/A", target: "#fpTable", title: "功能点怎么重认定", text: "ILF 442→2、未调整功能点 16115→85:概况/统计类不构成独立 ILF,改造类按复用系数取定。点每行看依据。" },
+  { route: "project/A/versions", target: "#versionTimeline", title: "多轮版本", text: "V1 送审稿 1369.53 → V2 评审后专家意见修改稿 13.41;每条核减的理由与依据都留痕。" },
+  { route: "project/B/versions", target: "#versionTimeline", title: "项目 B：人月怎么取定", text: "383→253.17 万。108 地市部署按实际工作量重算:权限 24→16 人月、流程 27.5→18.33 人月,等级高级下调中级/初级。" },
+  { route: "kb", target: "#kbQA", title: "知识库：依据从哪来", text: "两点法基准、方案编写规范(2023)、政采收费标准、等保/商密计费、本批案例;每条回答带引用。" },
   { route: "audit/A", target: "#auditTable", title: "最后交什么", text: "Excel 审定表：送审/初稿/定稿/审减/依据；只出表，不提整改建议，甲方按审定价招标。" },
 ];
 function renderTourPage() {
-  return `${pageHead("演示导览", "7 步带客户走完：批次规模 → 项目 A → 功能点 → 版本 → 五点法 → 知识库 → 审定表。", `<button class="btn btn-primary" data-action="start-tour">▶ 开始导览</button>`)}
+  return `${pageHead("演示导览", "8 步带客户走完：批次规模 → 送审上传 → 项目 A → 功能点重计 → 版本留痕 → 项目 B 人月 → 知识库 → 审定表。", `<button class="btn btn-primary" data-action="start-tour">▶ 开始导览</button>`)}
     <section class="panel"><div class="panel-head"><h2>5 分钟导览路线</h2><span class="hint">可随时退出 · 支持 ← → 键</span></div>
       <div class="issue-list">${TOUR.map((s, i) => `<div class="issue-card" style="cursor:default;"><div class="issue-card-top"><div><h4>${i + 1}. ${esc(s.title)}</h4><div class="issue-text">${esc(s.text)}</div></div><span class="badge tone-blue">${i + 1} / ${TOUR.length}</span></div></div>`).join("")}</div>
       <p class="table-note">建议：先给结论，再打开项目 A 的功能点；客户追问依据时停在知识库；最后用审定表收尾。</p>
@@ -826,7 +825,18 @@ async function parseIntakeFile(file) {
       const rows = XLSX.utils.sheet_to_json(wb.Sheets[n], { header: 1 });
       return `${n}(${rows.length} 行)`;
     });
-    return { kind: "Excel 工作簿", summary: "工作表:" + sheets.join("、"), chars: 0 };
+    let summary = "工作表:" + sheets.join("、");
+    const master = wb.SheetNames.find((n) => n.includes("资金审核总表"));
+    if (master) {
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[master], { header: 1, defval: "" });
+      let cats = 0, s = 0, a = 0;
+      for (const r of rows) {
+        const name = String(r[1] || "").trim();
+        if (name && typeof r[2] === "number" && typeof r[3] === "number" && String(r[0]).trim() !== "合计") { cats++; s += r[2]; a += r[3]; }
+      }
+      if (cats) summary = `识别为「项目资金审核表」:${cats} 个建设内容,送审 ${s.toFixed(2)} 万 → 审定 ${a.toFixed(2)} 万(核减 ${(s - a).toFixed(2)} 万);工作表:` + sheets.join("、");
+    }
+    return { kind: "Excel 工作簿", summary, chars: 0 };
   }
   if (ext === "pdf") {
     const pdfjsLib = await loadIntakeLib("pdfjs");
