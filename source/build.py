@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""构建单文件演示页：中通服项目评审工作台（财政评审）。
+"""构建单文件演示页：ZTF项目评审工作台（财政评审）。
 
 执行顺序（P-22）：python3 build_data.py（生成 data.json）→ python3 build.py（组装 + 校验）。
 验证门链：build.py（数据契约 + 产物完整性，本脚本）→ python3 verify_data.py（数值对账与
@@ -137,7 +137,7 @@ def compose(style, extra, shell, app, worker_holder, vendor_blocks, bootstrap):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
-<title>中通服项目评审工作台 · 财政评审</title>
+<title>ZTF项目评审工作台 · 财政评审</title>
 <style>
 {style}
 {extra}

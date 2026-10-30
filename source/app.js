@@ -937,7 +937,7 @@ function opinionDocHtml(p) {
     <div class="doc-sign">
       <span>评审人:___________</span><span>复核人:___________</span><span>专家:___________</span>
     </div>
-    <div class="doc-footer">中通服评审中心 · ${dateStr} · 本意见书由工作台按审核记录自动生成初稿</div>
+    <div class="doc-footer">ZTF评审中心 · ${dateStr} · 本意见书由工作台按审核记录自动生成初稿</div>
   </div>`;
 }
 function downloadBlob(blob, filename) {
@@ -960,7 +960,7 @@ async function exportAuditXlsx(p) {
   let XLSX;
   try { XLSX = await loadIntakeLib("xlsx"); } catch (e) { toast("Excel 导出组件需要联网加载,当前不可用;可先打印/存 PDF。"); return; }
   const header = [
-    ["中通服项目评审工作台 · 审定表"],
+    ["ZTF项目评审工作台 · 审定表"],
     [`项目:${p.name} · ${p.unit}`],
     [`送审:${money(p.submitted)} · 定稿:${money(p.approved)} · 审减:${money(p.reduction)}(${pct(p.rate)}) · 版本:${latestVersion(p).id}`],
     [],
